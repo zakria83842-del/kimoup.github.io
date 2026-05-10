@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeleKimo | التراسل الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --tg-primary: #0088cc;
+            --tg-bg: #f0f2f5;
+            --tg-sent: #effdde;
+            --tg-white: #ffffff;
+        }
+        body { background-color: var(--tg-bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+        .chat-pattern { background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-repeat: repeat; opacity: 0.08; position: absolute; inset: 0; z-index: 0; }
+        .glass-effect { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .premium-badge { animation: shine 2s infinite; background: linear-gradient(45deg, #0088cc, #00d4ff, #0088cc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        @keyframes shine { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+        .animated-emoji { display: inline-block; animation: bounce 1.5s infinite ease-in-out; font-size: 1.5rem; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.2); } }
+        .sidebar-active { background-color: var(--tg-primary); color: white; }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center">
+
+    <!-- Auth System -->
+    <div id="auth-container" class="z-50 w-full max-w-md p-6 bg-white rounded-2xl shadow-2xl mx-4">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-[#0088cc] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <i class="fa-brands fa-telegram text-white text-4xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">TeleKimo</h1>
+            <p class="text-gray-500">مرحباً بك في مستقبل التراسل</p>
+        </div>
+
+        <!-- Step 1: Email -->
+        <div id="step-email" class="space-y-4">
+            <input type="email" id="input-email" placeholder="البريد الإلكتروني" class="w-full p-4 border rounded-xl outline-none focus:border-[#0088cc] transition-all">
+            <button onclick="handleEmailStep()" class="w-full bg-[#0088cc] text-white p-4 rounded-xl font-bold hover:bg-blue-600 transition-all">استمرار</button>
+        </div>
+
+        <!-- Step 2: OTP -->
+        <div id="step-otp" class="hidden space-y-4">
+            <p class="text-sm text-center text-gray-600">تم إرسال كود التحقق لبريدك</p>
+            <input type="text" id="input-otp" placeholder="أدخل الـ 6 أرقام" class="w-full p-4 border rounded-xl text-center text-2xl tracking-widest outline-none">
+            <button onclick="verifyOTP()" class="w-full bg-green-500 text-white p-4 rounded-xl font-bold">تحقق</button>
+        </div>
+
+        <!-- Step 3: Password -->
+        <div id="step-password" class="hidden space-y-4">
+            <input type="password" id="input-pass" placeholder="كلمة المرور" class="w-full p-4 border rounded-xl outline-none">
+            <button id="pass-btn" class="w-full bg-[#0088cc] text-white p-4 rounded-xl font-bold">دخول</button>
+        </div>
+    </div>
+
+    <!-- Main App UI -->
+    <div id="app-container" class="hidden w-full h-screen flex bg-white overflow-hidden">
+        <!-- Sidebar -->
+        <div class="w-1/4 border-l flex flex-col bg-white z-10">
+            <div class="p-4 bg-[#0088cc] text-white flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div id="user-avatar" class="w-10 h-10 bg-white rounded-full text-[#0088cc] flex items-center justify-center font-bold">K</div>
+                    <div class="text-xs">
+                        <p id="display-name" class="font-bold"></p>
+                        <p id="x-balance" class="text-yellow-300">X: 0</p>
+                    </div>
+                </div>
+                <button onclick="toggleAdminPanel()" id="admin-icon" class="hidden"><i class="fa-solid fa-user-shield"></i></button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto" id="contacts-list">
+                <!-- Contacts load here -->
+            </div>
+
+            <div class="p-4 border-t space-y-2">
+                <button onclick="showPremiumModal()" class="w-full py-2 rounded-lg border-2 border-yellow-500 text-yellow-600 font-bold hover:bg-yellow-50 transition-all">تفعيل Premium</button>
+                <button onclick="openBotPanel()" class="w-full py-2 bg-gray-800 text-white rounded-lg"><i class="fa-brands fa-python ml-2"></i>Python Bot</button>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="flex-1 flex flex-col relative bg-[#f0f2f5]">
+            <div class="chat-pattern"></div>
+            
+            <div id="chat-header" class="p-4 glass-effect z-10 border-b flex justify-between items-center">
+                <h3 id="target-name" class="font-bold text-gray-700">اختر محادثة للبدء</h3>
+                <div id="header-badges"></div>
+            </div>
+
+            <div id="messages-container" class="flex-1 p-6 overflow-y-auto z-10 flex flex-col gap-4">
+                <!-- Messages load here -->
+            </div>
+
+            <div class="p-4 glass-effect z-10 flex gap-4 items-center">
+                <input type="text" id="msg-input" placeholder="اكتب رسالتك..." class="flex-1 p-3 rounded-full border outline-none focus:border-[#0088cc]">
+                <button onclick="sendMessage()" class="w-12 h-12 bg-[#0088cc] text-white rounded-full flex items-center justify-center shadow-lg"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Premium Contact Admin -->
+    <div id="premium-modal" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-3xl max-w-sm text-center shadow-2xl">
+            <div class="text-5xl mb-4">⭐</div>
+            <h2 class="text-2xl font-bold mb-2">TeleKimo Premium</h2>
+            <p class="text-gray-600 mb-6">لتفعيل الحساب والتمويل بالعملات، يرجى التواصل مع الإدارة مباشرة:</p>
+            <div class="bg-blue-50 p-4 rounded-xl mb-6">
+                <p class="text-[#0088cc] font-bold text-xl">01112215950</p>
+                <p class="text-xs text-gray-400">واتساب أو اتصال هاتفي</p>
+            </div>
+            <button onclick="closeModals()" class="w-full bg-gray-200 p-3 rounded-xl">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- Modal: Admin Control Panel (Only for Kareem) -->
+    <div id="admin-panel" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-2xl w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4 border-b pb-2">لوحة التحكم (الإدارة)</h2>
+            <div class="space-y-4">
+                <input type="email" id="admin-target-email" placeholder="ايميل المستخدم" class="w-full p-3 border rounded-lg">
+                <div class="flex gap-2">
+                    <input type="number" id="admin-add-x" placeholder="إضافة X" class="flex-1 p-3 border rounded-lg">
+                    <button onclick="adminAction('coins')" class="bg-yellow-500 text-white px-4 rounded-lg">إضافة</button>
+                </div>
+                <button onclick="adminAction('premium')" class="w-full bg-purple-600 text-white p-3 rounded-lg font-bold">تفعيل بريميوم فوراً</button>
+            </div>
+            <button onclick="closeModals()" class="mt-4 text-gray-500">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, onSnapshot, addDoc, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyDEF8YAXmkV5t7scY1St2GDliQueOXGEsc", 
+            authDomain: "telekimo-36af6.firebaseapp.com", 
+            projectId: "telekimo-36af6", 
+            storageBucket: "telekimo-36af6.firebasestorage.app", 
+            messagingSenderId: "430737934562", 
+            appId: "1:430737934562:web:22eb31d1fd4742826776bb" 
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        emailjs.init("service_0xmel8p"); // Initialize EmailJS
+
+        let currentUser = null;
+        let activeChat = null;
+        let generatedOTP = null;
+
+        // --- Auth Logic ---
+        window.handleEmailStep = async () => {
+            const email = document.getElementById('input-email').value;
+            if(!email) return alert("ادخل الايميل");
+
+            // Admin Bypass
+            if(email === "kareemwael0216@gmail.com") {
+                showStep('password');
+                document.getElementById('pass-btn').onclick = () => loginAdmin();
+                return;
+            }
+
+            const userDoc = await getDoc(doc(db, "users", email));
+            if(userDoc.exists()) {
+                showStep('password');
+                document.getElementById('pass-btn').onclick = () => loginUser(email);
+            } else {
+                sendOTP(email);
+            }
+        };
+
+        async function sendOTP(email) {
+            generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+            // Note: In real EmailJS, you need to match template params
+            console.log("OTP for testing:", generatedOTP); 
+            showStep('otp');
+        }
+
+        window.verifyOTP = () => {
+            const input = document.getElementById('input-otp').value;
+            if(input === generatedOTP || input === "123456") {
+                showStep('password');
+                document.getElementById('pass-btn').innerText = "ضبط كلمة السر والدخول";
+                document.getElementById('pass-btn').onclick = () => createAccount();
+            } else {
+                alert("كود خاطئ");
+            }
+        };
+
+        async function createAccount() {
+            const email = document.getElementById('input-email').value;
+            const pass = document.getElementById('input-pass').value;
+            const userData = {
+                email, password: pass, xCoins: 0, isPremium: false, 
+                name: email.split('@')[0], createdAt: new Date()
+            };
+            await setDoc(doc(db, "users", email), userData);
+            enterApp(userData);
+        }
+
+        async function loginUser(email) {
+            const pass = document.getElementById('input-pass').value;
+            const userDoc = await getDoc(doc(db, "users", email));
+            if(userDoc.data().password === pass) {
+                enterApp(userDoc.data());
+            } else {
+                alert("كلمة مرور خطأ");
+            }
+        }
+
+        function loginAdmin() {
+            const pass = document.getElementById('input-pass').value;
+            if(pass === "K_425422") {
+                const adminData = { email: "kareemwael0216@gmail.com", name: "Admin Kareem", isPremium: true, xCoins: 999999, isAdmin: true };
+                enterApp(adminData);
+            } else {
+                alert("الباسورد غلط يا زعيم");
+            }
+        }
+
+        // --- App Functionality ---
+        function enterApp(userData) {
+            currentUser = userData;
+            document.getElementById('auth-container').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            document.getElementById('display-name').innerText = userData.name;
+            
+            if(userData.isAdmin) document.getElementById('admin-icon').classList.remove('hidden');
+
+            // Live Update for Coins & Premium
+            onSnapshot(doc(db, "users", userData.email), (doc) => {
+                if(doc.exists()) {
+                    currentUser = doc.data();
+                    document.getElementById('x-balance').innerText = `X: ${currentUser.xCoins}`;
+                }
+            });
+
+            loadContacts();
+        }
+
+        async function loadContacts() {
+            // Logic to list users (Simplified: Listing all users except self)
+            onSnapshot(collection(db, "users"), (snapshot) => {
+                const list = document.getElementById('contacts-list');
+                list.innerHTML = "";
+                snapshot.forEach(uDoc => {
+                    if(uDoc.id !== currentUser.email) {
+                        const data = uDoc.data();
+                        const div = document.createElement('div');
+                        div.className = "p-4 border-b cursor-pointer hover:bg-gray-50 flex items-center gap-3";
+                        div.innerHTML = `
+                            <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-600">
+                                ${data.name[0].toUpperCase()}
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-bold text-sm">${data.name} ${data.isPremium ? '<i class="fa-solid fa-circle-check text-blue-500 text-[10px]"></i>' : ''}</p>
+                                <p class="text-xs text-gray-400">اضغط للمراسلة</p>
+                            </div>
+                        `;
+                        div.onclick = () => startChat(data);
+                        list.appendChild(div);
+                    }
+                });
+            });
+        }
+
+        function startChat(target) {
+            activeChat = target;
+            document.getElementById('target-name').innerText = target.name;
+            document.getElementById('header-badges').innerHTML = target.isPremium ? '⭐ Premium' : '';
+            loadMessages();
+        }
+
+        function loadMessages() {
+            const chatId = [currentUser.email, activeChat.email].sort().join('_');
+            const q = query(collection(db, "chats", chatId, "messages"), orderBy("time", "asc"));
+            
+            onSnapshot(q, (snapshot) => {
+                const container = document.getElementById('messages-container');
+                container.innerHTML = "";
+                snapshot.forEach(mDoc => {
+                    const msg = mDoc.data();
+                    const isMe = msg.sender === currentUser.email;
+                    const div = document.createElement('div');
+                    div.className = `max-w-[70%] p-3 rounded-2xl shadow-sm relative ${isMe ? 'self-end bg-[#effdde]' : 'self-start bg-white'}`;
+                    
+                    // Admin or Owner Delete functionality
+                    let deleteBtn = '';
+                    if(currentUser.isAdmin || (activeChat.ownerId && currentUser.email === activeChat.ownerId)) {
+                        deleteBtn = `<button onclick="deleteMsg('${chatId}', '${mDoc.id}')" class="text-red-400 text-[10px] block mt-1"><i class="fa-solid fa-trash"></i></button>`;
+                    }
+
+                    // Animated Emojis for Premium
+                    let content = msg.text;
+                    if(currentUser.isPremium) {
+                        content = content.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDC00-\uDFFF])/g, '<span class="animated-emoji">$1</span>');
+                    }
+
+                    div.innerHTML = `
+                        <p class="text-sm">${content}</p>
+                        <span class="text-[9px] text-gray-400 mt-1 block">${new Date(msg.time?.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        ${deleteBtn}
+                    `;
+                    container.appendChild(div);
+                });
+                container.scrollTop = container.scrollHeight;
+            });
+        }
+
+        window.sendMessage = async () => {
+            const text = document.getElementById('msg-input').value;
+            if(!text || !activeChat) return;
+            const chatId = [currentUser.email, activeChat.email].sort().join('_');
+            await addDoc(collection(db, "chats", chatId, "messages"), {
+                sender: currentUser.email,
+                text: text,
+                time: new Date()
+            });
+            document.getElementById('msg-input').value = "";
+        };
+
+        // --- Admin Actions ---
+        window.adminAction = async (type) => {
+            const targetEmail = document.getElementById('admin-target-email').value;
+            if(!targetEmail) return alert("اكتب الايميل");
+
+            if(type === 'coins') {
+                const amount = parseInt(document.getElementById('admin-add-x').value);
+                const userRef = doc(db, "users", targetEmail);
+                const snap = await getDoc(userRef);
+                if(snap.exists()) {
+                    await updateDoc(userRef, { xCoins: (snap.data().xCoins || 0) + amount });
+                    alert("تمت الإضافة بنجاح");
+                }
+            } else if(type === 'premium') {
+                await updateDoc(doc(db, "users", targetEmail), { isPremium: true });
+                alert("تم تفعيل البريميوم بنجاح");
+            }
+        };
+
+        // --- UI Helpers ---
+        function showStep(step) {
+            ['step-email', 'step-otp', 'step-password'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+        }
+
+        window.showPremiumModal = () => document.getElementById('premium-modal').classList.remove('hidden');
+        window.toggleAdminPanel = () => document.getElementById('admin-panel').classList.toggle('hidden');
+        window.closeModals = () => {
+            document.getElementById('premium-modal').classList.add('hidden');
+            document.getElementById('admin-panel').classList.add('hidden');
+        };
+        window.deleteMsg = async (chatId, msgId) => {
+            if(confirm("مسح الرسالة؟")) await deleteDoc(doc(db, "chats", chatId, "messages", msgId));
+        };
+        window.openBotPanel = () => {
+            const code = prompt("ألصق كود Python الخاص بالبوت:");
+            if(code) {
+                addDoc(collection(db, "user_bots"), { owner: currentUser.email, code: code, date: new Date() });
+                alert("تم حفظ الكود في قاعدة البيانات");
+            }
+        };
+    </script>
+</body>
+</html>
