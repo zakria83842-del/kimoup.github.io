@@ -3,262 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KimoUp | النسخة الماستر V5</title>
+    <title>KimoUp Ultimate V6 | AI & Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --main: #4f46e5; --bg: #f8fafc; }
-        body { background-color: var(--bg); font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; }
+        :root { --main: #6366f1; --premium: #f59e0b; }
+        body { background: #0f172a; font-family: 'Segoe UI', system-ui; color: white; height: 100vh; overflow: hidden; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .kimo-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
+        .premium-border { border: 2px solid var(--premium); position: relative; }
+        .premium-badge { background: var(--premium); color: black; font-weight: 900; font-size: 10px; padding: 2px 6px; border-radius: 4px; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Animations */
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
+        .premium-active { animation: pulse-gold 2s infinite; }
+        
+        .msg-bubble { max-width: 80%; padding: 12px 16px; border-radius: 20px; margin-bottom: 8px; position: relative; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .ai-loading { display: flex; gap: 4px; padding: 10px; }
+        .dot { width: 8px; height: 8px; background: #818cf8; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out; }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-        /* Gradients & Animations */
-        .kimo-gradient { background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%); }
-        .chat-pattern { background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.04; position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-        
-        .msg-bubble { position: relative; z-index: 10; transition: all 0.2s; word-break: break-word; }
-        .msg-bubble img { max-width: 250px; border-radius: 10px; margin-top: 5px; cursor: pointer; }
-        
-        /* Gift Animations */
-        .gift-bear { font-size: 4rem; animation: float 3s ease-in-out infinite; cursor: pointer; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15)); transition: transform 0.2s; }
-        .gift-bear:hover { transform: scale(1.1); }
-        .gift-claimed { font-size: 3rem; filter: grayscale(100%); opacity: 0.5; cursor: not-allowed; }
-        @keyframes float { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
-        
-        /* Online Indicator */
-        .online-dot { width: 12px; height: 12px; background-color: #22c55e; border-radius: 50%; border: 2px solid white; position: absolute; bottom: 0; right: 0; box-shadow: 0 0 5px rgba(34, 197, 94, 0.5); }
-        
-        /* Tabs & Emoji Panel */
-        .tab-btn { flex: 1; padding: 12px; text-align: center; font-weight: bold; color: #64748b; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.3s; }
-        .tab-btn.active { color: #4f46e5; border-bottom: 2px solid #4f46e5; background: #e0e7ff; }
-        
-        .emoji-panel { display: none; position: absolute; bottom: 90px; right: 20px; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 100; grid-template-columns: repeat(6, 1fr); gap: 10px; border: 1px solid #f1f5f9; }
-        .emoji-panel button { font-size: 1.5rem; transition: transform 0.1s; }
-        .emoji-panel button:hover { transform: scale(1.2); }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="h-screen flex items-center justify-center text-gray-800 relative">
+<body>
 
-    <div id="toast-container" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[999] flex flex-col gap-2"></div>
+    <div id="toast-layer" class="fixed top-5 left-1/2 -translate-x-1/2 z-[1000] flex flex-col gap-2"></div>
 
-    <div id="auth-container" class="z-50 w-full max-w-md p-10 bg-white rounded-[2.5rem] shadow-2xl mx-4 text-center border border-gray-100 relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-2 kimo-gradient"></div>
-        <div class="w-24 h-24 kimo-gradient rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl rotate-3 border-4 border-indigo-50">
-            <i class="fa-solid fa-bolt text-white text-4xl"></i>
-        </div>
-        <h1 class="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 mb-2">KimoUp</h1>
-        <p class="text-sm text-gray-400 font-bold mb-8">التواصل في أسرع صورة</p>
-        
-        <div class="space-y-4 relative z-10">
-            <div class="relative">
-                <i class="fa-solid fa-envelope absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="email" id="email" placeholder="البريد الإلكتروني" class="w-full p-4 pr-12 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-indigo-500 text-right transition font-medium">
+    <div id="auth-screen" class="fixed inset-0 z-[500] flex items-center justify-center bg-slate-950 px-4">
+        <div class="glass-panel p-10 rounded-[3rem] w-full max-w-md text-center shadow-2xl border-t-4 border-indigo-500">
+            <div class="w-20 h-20 kimo-gradient rounded-3xl flex items-center justify-center mx-auto mb-6 rotate-12 shadow-indigo-500/20 shadow-2xl">
+                <i class="fa-solid fa-robot text-white text-4xl"></i>
             </div>
-            <div class="relative">
-                <i class="fa-solid fa-lock absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="password" id="password" placeholder="كلمة المرور" class="w-full p-4 pr-12 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-indigo-500 text-right transition font-medium">
+            <h1 class="text-3xl font-black mb-2 tracking-tight">KIMO<span class="text-indigo-400">UP</span> AI</h1>
+            <p class="text-slate-400 text-sm mb-8 font-medium">الجيل السادس من التواصل الذكي</p>
+            
+            <div class="space-y-4">
+                <input type="email" id="email" placeholder="البريد الإلكتروني" class="w-full p-4 bg-slate-800/50 rounded-2xl outline-none focus:ring-2 ring-indigo-500 border border-slate-700 transition">
+                <input type="password" id="pass" placeholder="كلمة المرور" class="w-full p-4 bg-slate-800/50 rounded-2xl outline-none focus:ring-2 ring-indigo-500 border border-slate-700 transition">
+                <button onclick="authAction('in')" class="w-full kimo-gradient p-4 rounded-2xl font-black shadow-lg hover:scale-[1.02] transition active:scale-95">دخول</button>
+                <button onclick="authAction('up')" class="w-full text-slate-400 text-xs font-bold hover:text-white transition">ليس لديك حساب؟ سجل الآن</button>
             </div>
-            <button onclick="handleSignIn()" class="w-full kimo-gradient text-white p-4 rounded-2xl font-bold shadow-lg hover:shadow-indigo-500/30 transition transform hover:-translate-y-1">تسجيل الدخول</button>
-            <button onclick="handleSignUp()" class="w-full p-4 text-sm text-indigo-600 font-bold hover:bg-indigo-50 rounded-2xl transition">إنشاء حساب جديد</button>
         </div>
     </div>
 
-    <div id="app-container" class="hidden w-full h-screen flex bg-white overflow-hidden">
+    <div id="main-app" class="hidden h-screen flex overflow-hidden">
         
-        <div class="w-80 md:w-96 border-l flex flex-col bg-white z-20 shadow-2xl relative">
-            
-            <div class="p-6 bg-white border-b relative">
-                <div class="absolute top-0 left-0 w-full h-1 kimo-gradient"></div>
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-black text-indigo-900 tracking-tighter">KIMO<span class="text-purple-600">UP</span></h2>
-                    <div class="flex gap-2">
-                        <button onclick="openSettings()" class="w-9 h-9 bg-gray-100 text-gray-600 rounded-xl flex items-center justify-center hover:bg-indigo-100 hover:text-indigo-600 transition"><i class="fa-solid fa-gear"></i></button>
-                        <button id="admin-btn" onclick="toggleAdminPanel()" class="hidden w-9 h-9 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shadow-sm"><i class="fa-solid fa-crown"></i></button>
-                    </div>
+        <div class="w-80 border-l border-slate-800 flex flex-col glass-panel">
+            <div class="p-6 border-b border-slate-800">
+                <div class="flex items-center justify-between mb-6">
+                    <span class="font-black text-xl italic">V6.0</span>
+                    <button onclick="toggleAdmin()" id="admin-btn" class="hidden text-amber-500"><i class="fa-solid fa-crown"></i></button>
                 </div>
                 
-                <div class="flex items-center gap-4">
-                    <div class="relative cursor-pointer" onclick="openSettings()">
-                        <img id="user-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="w-16 h-16 rounded-2xl object-cover shadow-md border border-gray-100">
-                        <span id="user-badge" class="absolute -top-2 -right-2 text-xl filter drop-shadow-md"></span>
-                        <div class="online-dot"></div>
+                <div class="flex items-center gap-4 p-4 bg-slate-800/40 rounded-3xl border border-slate-700/50">
+                    <div class="relative">
+                        <img id="u-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="w-14 h-14 rounded-2xl object-cover shadow-lg">
+                        <div id="u-premium-tag" class="hidden absolute -top-2 -right-2 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center text-[10px] text-black"><i class="fa-solid fa-star"></i></div>
                     </div>
-                    <div>
-                        <p id="user-name-display" class="font-black text-lg text-gray-800">تحميل...</p>
-                        <div class="bg-amber-50 px-3 py-1 rounded-lg mt-1 inline-block border border-amber-100">
-                            <p id="user-x-balance" class="text-xs text-amber-600 font-black tracking-wider"><i class="fa-solid fa-coins mr-1"></i> X: 0</p>
+                    <div class="overflow-hidden">
+                        <p id="u-name" class="font-bold truncate text-sm">تحميل...</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-bold">X: <span id="u-coins">0</span></span>
+                            <span id="ai-counter-label" class="text-[10px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full font-bold">AI: <span id="u-ai-count">0</span>/10</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="flex border-b bg-gray-50/50">
-                <div id="tab-chats" class="tab-btn active" onclick="switchTab('chats')"><i class="fa-solid fa-user mr-2"></i>الأصدقاء</div>
-                <div id="tab-groups" class="tab-btn" onclick="switchTab('groups')"><i class="fa-solid fa-users mr-2"></i>المجتمعات</div>
+            <div id="sidebar-list" class="flex-1 overflow-y-auto p-4 space-y-2">
+                <div onclick="startAIChat()" class="flex items-center gap-3 p-4 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 cursor-pointer hover:bg-indigo-600/30 transition group">
+                    <div class="w-10 h-10 kimo-gradient rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-12 transition">
+                        <i class="fa-solid fa-wand-magic-sparkles text-white"></i>
+                    </div>
+                    <div>
+                        <p class="font-black text-sm text-indigo-300">كيمو AI (Vision)</p>
+                        <p class="text-[10px] text-indigo-400/70">اسألني أي شيء أو ارفع صورة</p>
+                    </div>
+                </div>
+                <div class="h-px bg-slate-800 my-4"></div>
+                <div id="contacts-container" class="space-y-1"></div>
             </div>
 
-            <div class="p-4 bg-white border-b" id="sidebar-action-area">
-                </div>
-
-            <div id="contacts-list" class="flex-1 overflow-y-auto bg-white"></div>
-            <div id="groups-list" class="flex-1 overflow-y-auto bg-white hidden"></div>
-            
-            <button onclick="handleSignOut()" class="p-4 text-xs text-red-500 font-bold border-t bg-red-50/30 hover:bg-red-50 transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج
+            <button onclick="logout()" class="p-6 text-slate-500 hover:text-red-400 transition text-sm font-bold flex items-center justify-center gap-2 border-t border-slate-800">
+                <i class="fa-solid fa-power-off"></i> تسجيل الخروج
             </button>
         </div>
 
-        <div class="flex-1 flex flex-col relative bg-gray-50">
-            <div class="chat-pattern"></div>
+        <div class="flex-1 flex flex-col relative">
             
-            <div id="welcome-screen" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 z-10 backdrop-blur-sm bg-white/50">
-                <div class="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center shadow-inner mb-6 relative overflow-hidden">
-                    <i class="fa-solid fa-paper-plane text-5xl text-indigo-300 transform -translate-x-1 translate-y-1"></i>
-                </div>
-                <h2 class="text-2xl font-black text-gray-800 mb-2">أهلاً بك في KimoUp</h2>
-                <p class="font-bold opacity-60 text-sm">اختر محادثة أو جروب للبدء</p>
-            </div>
-
-            <div id="chat-ui" class="hidden h-full flex flex-col relative z-10">
-                
-                <div class="p-4 bg-white/95 backdrop-blur-md shadow-sm flex justify-between items-center px-6 border-b z-20">
-                    <div class="flex items-center gap-4">
-                        <div class="relative">
-                            <img id="target-img" src="" class="w-12 h-12 rounded-2xl object-cover border border-gray-100 shadow-sm">
-                            <div id="target-online-status" class="hidden online-dot"></div>
-                        </div>
-                        <div>
-                            <h3 id="target-name" class="font-black text-gray-800 text-lg flex items-center gap-2">...</h3>
-                            <p id="target-subtitle" class="text-xs text-indigo-500 font-bold">...</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-2">
-                        <button id="group-link-btn" onclick="copyGroupLink()" class="hidden bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-100 transition shadow-sm border border-indigo-100 flex items-center gap-2">
-                            <i class="fa-solid fa-link"></i> رابط الدعوة
-                        </button>
-                        <button id="gift-btn" onclick="sendXGift()" class="bg-amber-100 text-amber-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-amber-200 transition shadow-sm border border-amber-200 flex items-center gap-2">
-                            <i class="fa-solid fa-gift"></i> إرسال هدية
-                        </button>
+            <div id="chat-header" class="hidden p-5 border-b border-slate-800 flex justify-between items-center glass-panel z-10">
+                <div class="flex items-center gap-4">
+                    <img id="chat-avatar" class="w-12 h-12 rounded-2xl object-cover border border-slate-700">
+                    <div>
+                        <h3 id="chat-title" class="font-black text-lg">...</h3>
+                        <p id="chat-status" class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest">Online</p>
                     </div>
                 </div>
-
-                <div id="messages-area" class="flex-1 p-6 overflow-y-auto flex flex-col gap-3 scroll-smooth"></div>
-
-                <div id="chat-input-area" class="p-4 bg-white border-t relative z-20 flex flex-col gap-2 shadow-[0_-10px_30px_rgba(0,0,0,0.02)]">
-                    
-                    <div id="emoji-picker" class="emoji-panel">
-                        <button onclick="addEmoji('😊')">😊</button><button onclick="addEmoji('😂')">😂</button><button onclick="addEmoji('❤️')">❤️</button>
-                        <button onclick="addEmoji('🔥')">🔥</button><button onclick="addEmoji('👍')">👍</button><button onclick="addEmoji('🎁')">🎁</button>
-                        <button onclick="addEmoji('🧸')">🧸</button><button onclick="addEmoji('✨')">✨</button><button onclick="addEmoji('✔️')">✔️</button>
-                        <button onclick="addEmoji('👑')">👑</button><button onclick="addEmoji('💔')">💔</button><button onclick="addEmoji('💯')">💯</button>
-                    </div>
-
-                    <div class="flex gap-3 items-end px-4">
-                        <button onclick="toggleEmoji()" class="w-12 h-12 text-2xl text-gray-400 hover:text-indigo-500 transition"><i class="fa-regular fa-face-smile"></i></button>
-                        
-                        <label class="w-12 h-12 text-xl text-gray-400 hover:text-indigo-500 transition cursor-pointer flex items-center justify-center">
-                            <i class="fa-solid fa-paperclip"></i>
-                            <input type="file" id="chat-file-input" class="hidden" accept="image/*" onchange="sendImageMsg()">
-                        </label>
-
-                        <div class="flex-1 relative bg-gray-50 rounded-2xl border border-gray-100 focus-within:ring-2 ring-indigo-100 transition shadow-inner">
-                            <textarea id="msg-input" placeholder="اكتب رسالتك هنا..." class="w-full p-4 bg-transparent outline-none resize-none max-h-32 text-sm leading-relaxed" rows="1"></textarea>
-                        </div>
-                        
-                        <button id="voice-btn" class="w-14 h-14 bg-gray-100 text-gray-500 rounded-2xl flex items-center justify-center transition active:bg-red-500 active:text-white shadow-sm hover:bg-gray-200">
-                            <i class="fa-solid fa-microphone text-xl"></i>
-                        </button>
-                        <button onclick="sendMessage()" class="w-14 h-14 kimo-gradient text-white rounded-2xl shadow-lg flex items-center justify-center hover:-translate-y-1 transition active:translate-y-0">
-                            <i class="fa-solid fa-paper-plane text-xl transform -translate-x-1 translate-y-0.5"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="channel-overlay" class="hidden absolute bottom-0 left-0 w-full p-6 bg-white border-t text-center z-30">
-                    <p class="font-bold text-gray-400 text-sm"><i class="fa-solid fa-bullhorn mr-2"></i>هذه القناة للقراءة فقط، الإدمن فقط يمكنه النشر.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-settings" class="hidden fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl relative border border-white/20">
-            <h2 class="text-2xl font-black mb-6 text-gray-800 flex items-center gap-3"><i class="fa-solid fa-user-pen text-indigo-500"></i> إعدادات الحساب</h2>
-            <div class="space-y-4">
-                <div class="flex flex-col items-center mb-6">
-                    <div class="relative">
-                        <img id="preview-img" src="" class="w-24 h-24 rounded-full object-cover mb-3 border-4 border-indigo-50 shadow-md">
-                        <label class="absolute bottom-3 -right-2 bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-indigo-700 transition border-2 border-white">
-                            <i class="fa-solid fa-camera text-xs"></i>
-                            <input type="file" id="avatar-input" class="hidden" accept="image/*" onchange="previewAvatar()">
-                        </label>
-                    </div>
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-gray-500 ml-2 mb-1 block">الاسم المستعار</label>
-                    <input type="text" id="set-name" class="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-indigo-200">
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-gray-500 ml-2 mb-1 block">شارة (إيموجي / علامة توثيق 🔵)</label>
-                    <input type="text" id="set-badge" class="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-indigo-200 text-center text-xl">
-                </div>
-                <div class="pt-4 flex gap-3">
-                    <button onclick="updateProfile()" class="flex-1 kimo-gradient text-white p-4 rounded-2xl font-bold shadow-lg hover:shadow-indigo-500/30">حفظ التغييرات</button>
-                    <button onclick="closeModals()" class="p-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200">إلغاء</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-group" class="hidden fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl">
-            <h2 class="text-2xl font-black mb-6 flex items-center gap-3"><i class="fa-solid fa-users-rectangle text-purple-500"></i> إنشاء مجتمع جديد</h2>
-            <div class="space-y-4">
-                <input type="text" id="group-name" placeholder="اسم الجروب أو القناة" class="w-full p-4 bg-gray-50 rounded-2xl outline-none">
-                <select id="group-type" class="w-full p-4 bg-gray-50 rounded-2xl outline-none font-bold text-gray-600 cursor-pointer border-none">
-                    <option value="group">جروب عام (الكل يتحدث)</option>
-                    <option value="channel">قناة (للنشر فقط)</option>
-                </select>
-                <div class="pt-4 flex gap-3">
-                    <button onclick="createGroup()" class="flex-1 bg-purple-600 text-white p-4 rounded-2xl font-bold shadow-lg">إنشاء الآن</button>
-                    <button onclick="closeModals()" class="p-4 bg-gray-100 text-gray-600 rounded-2xl font-bold">إلغاء</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="admin-panel" class="hidden fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl border-2 border-amber-200">
-            <h2 class="text-2xl font-black mb-6 text-amber-600 flex items-center gap-3"><i class="fa-solid fa-shield-halved"></i> تحكم الأدمن الكلي</h2>
-            <div class="space-y-4">
-                <input type="email" id="admin-user" placeholder="إيميل المستخدم المستهدف" class="w-full p-4 bg-amber-50 rounded-2xl outline-none border border-amber-100">
                 <div class="flex gap-2">
-                    <input type="number" id="admin-amount" placeholder="كمية X للتحويل" class="flex-1 p-4 bg-amber-50 rounded-2xl outline-none border border-amber-100">
-                    <button onclick="adminAction('coins')" class="bg-amber-500 text-white px-6 rounded-2xl font-bold shadow-md hover:bg-amber-600">شحن</button>
+                    <button onclick="upgradePrompt()" id="upgrade-btn" class="hidden bg-amber-500/10 text-amber-500 px-4 py-2 rounded-xl text-xs font-black border border-amber-500/20 hover:bg-amber-500 hover:text-black transition">ترقية للبريميوم 👑</button>
+                    <button class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center hover:bg-slate-700"><i class="fa-solid fa-ellipsis-vertical"></i></button>
                 </div>
-                <button onclick="closeModals()" class="w-full mt-4 text-gray-400 font-bold hover:text-gray-600">إغلاق اللوحة</button>
+            </div>
+
+            <div id="msg-box" class="flex-1 overflow-y-auto p-6 flex flex-col gap-4 scroll-smooth">
+                <div class="m-auto text-center opacity-20 pointer-events-none">
+                    <i class="fa-solid fa-shield-cat text-9xl mb-4"></i>
+                    <h2 class="text-2xl font-black italic">KIMO UP ULTIMATE</h2>
+                </div>
+            </div>
+
+            <div id="ai-typing" class="hidden px-8 py-2">
+                <div class="ai-loading">
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                </div>
+            </div>
+
+            <div id="input-area" class="hidden p-6 glass-panel border-t border-slate-800 relative">
+                
+                <div id="image-preview-box" class="hidden absolute bottom-full left-6 mb-4 p-2 bg-slate-800 rounded-2xl border border-indigo-500/50 shadow-2xl">
+                    <img id="img-prev" class="w-32 h-32 object-cover rounded-xl border border-slate-700">
+                    <button onclick="clearImage()" class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full text-[10px] flex items-center justify-center shadow-lg"><i class="fa-solid fa-times"></i></button>
+                </div>
+
+                <div class="flex items-end gap-3 max-w-5xl mx-auto">
+                    <label class="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-slate-700 transition shadow-xl text-indigo-400">
+                        <i class="fa-solid fa-camera-retro text-xl"></i>
+                        <input type="file" id="file-input" class="hidden" accept="image/*" onchange="handleImage(this)">
+                    </label>
+                    
+                    <div class="flex-1 relative">
+                        <textarea id="msg-input" placeholder="اسأل كيمو AI أو دردش مع صديق..." class="w-full bg-slate-800/50 border border-slate-700 p-4 pr-6 rounded-[1.5rem] outline-none focus:ring-2 ring-indigo-500/50 transition min-h-[56px] max-h-40 resize-none text-sm leading-relaxed" rows="1"></textarea>
+                    </div>
+
+                    <button id="record-btn" class="w-14 h-14 bg-slate-800 text-slate-400 rounded-2xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition shadow-xl">
+                        <i class="fa-solid fa-microphone text-xl"></i>
+                    </button>
+                    
+                    <button onclick="handleSend()" class="w-14 h-14 kimo-gradient text-white rounded-2xl flex items-center justify-center shadow-indigo-500/30 shadow-xl hover:scale-105 transition active:scale-95">
+                        <i class="fa-solid fa-paper-plane-top text-xl"></i>
+                        <i class="fa-solid fa-bolt text-xl"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, arrayUnion, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, addDoc, serverTimestamp, query, orderBy, limit, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // إعدادات قاعدة البيانات الخاصة بك
+        // Firebase Config
         const firebaseConfig = { 
             apiKey: "AIzaSyDEF8YAXmkV5t7scY1St2GDliQueOXGEsc", 
             authDomain: "telekimo-36af6.firebaseapp.com", 
             projectId: "telekimo-36af6", 
-            storageBucket: "telekimo-36af6.firebasestorage.app", 
-            messagingSenderId: "430737934562", 
             appId: "1:430737934562:web:22eb31d1fd4742826776bb" 
         };
 
@@ -266,547 +173,264 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // متغيرات النظام الأساسية
+        // Constants
+        const GROQ_API_KEY = "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";
+        const AI_EMAIL = "KimoAI@system";
+        const PREMIUM_COST = 500; // سعر الترقية بالعملات
+
         let currentUser = null;
-        let activeChat = null; // يحمل بيانات الصديق أو الجروب
-        let chatType = 'direct'; // 'direct' or 'group'
-        let currentTab = 'chats'; // 'chats' or 'groups'
-        let activeSnapshotUnsubscribe = null; // لمسح الـ listener القديم
-        
-        // متغيرات التسجيل والميديا
-        let mediaRecorder;
-        let audioChunks = [];
-        let base64Avatar = "";
+        let activeChat = null;
+        let currentBase64Image = null;
+        let isAIBusy = false;
 
-        // نظام التنبيهات المنبثقة (Toasts)
-        window.showToast = (msg, type = 'info') => {
-            const colors = { info: 'bg-indigo-600', success: 'bg-green-500', error: 'bg-red-500' };
-            const container = document.getElementById('toast-container');
-            const el = document.createElement('div');
-            el.className = `${colors[type]} text-white px-6 py-3 rounded-2xl shadow-xl font-bold text-sm transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center gap-2`;
-            el.innerHTML = `<i class="fa-solid ${type==='success'?'fa-check-circle':type==='error'?'fa-circle-exclamation':'fa-info-circle'}"></i> ${msg}`;
-            container.appendChild(el);
-            setTimeout(() => { el.classList.remove('translate-y-[-20px]', 'opacity-0'); }, 10);
-            setTimeout(() => { el.classList.add('opacity-0'); setTimeout(() => el.remove(), 300); }, 3000);
-        };
+        // ---------------------------------------------------------
+        // 1. Auth & Profile Sync
+        // ---------------------------------------------------------
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userRef = doc(db, "users", user.email);
+                const snap = await getDoc(userRef);
+                if (!snap.exists()) {
+                    await setDoc(userRef, { 
+                        email: user.email, name: user.email.split('@')[0], 
+                        xCoins: 100, aiUsage: 0, isPremium: false, avatar: "" 
+                    });
+                }
+                
+                onSnapshot(userRef, (d) => {
+                    currentUser = d.data();
+                    updateProfileUI();
+                    renderSidebar();
+                });
 
-        // طلب إذن الإشعارات الخارجية
-        if (Notification.permission !== "granted") Notification.requestPermission();
-
-        // ----------------------------------------------------------------------
-        // 1. نظام المصادقة والحالة (Auth & Online Presence)
-        // ----------------------------------------------------------------------
-        async function setOnlineStatus(email, isOnline) {
-            try { await updateDoc(doc(db, "users", email), { isOnline, lastSeen: serverTimestamp() }); } catch(e){}
-        }
-
-        window.addEventListener('beforeunload', () => {
-            if(currentUser) setOnlineStatus(currentUser.email, false);
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-app').classList.remove('hidden');
+                if (user.email === "kareemwael0216@gmail.com") document.getElementById('admin-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('auth-screen').style.display = 'flex';
+                document.getElementById('main-app').classList.add('hidden');
+            }
         });
 
-        async function enterApp(email, isAdmin = false) {
-            const userRef = doc(db, "users", email);
-            const snap = await getDoc(userRef);
+        window.authAction = async (type) => {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('pass').value;
+            try {
+                if(type === 'in') await signInWithEmailAndPassword(auth, e, p);
+                else await createUserWithEmailAndPassword(auth, e, p);
+            } catch(err) { toast(err.message, "error"); }
+        };
+
+        function updateProfileUI() {
+            document.getElementById('u-name').innerText = currentUser.name;
+            document.getElementById('u-coins').innerText = currentUser.xCoins;
+            document.getElementById('u-ai-count').innerText = currentUser.aiUsage;
+            document.getElementById('u-avatar').src = currentUser.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
             
-            if (!snap.exists()) {
-                await setDoc(userRef, { email, name: email.split('@')[0], avatar: "", xCoins: 0, badge: "", contacts: [], isOnline: true });
-            } else {
-                await setOnlineStatus(email, true);
+            const aiLabel = document.getElementById('ai-counter-label');
+            if (currentUser.isPremium) {
+                aiLabel.innerHTML = "PREMIUM ♾️";
+                aiLabel.className = "text-[10px] bg-amber-500 text-black px-2 py-0.5 rounded-full font-black";
+                document.getElementById('u-premium-tag').classList.remove('hidden');
+            }
+        }
+
+        // ---------------------------------------------------------
+        // 2. AI & Vision Logic
+        // ---------------------------------------------------------
+        async function callGroqAI(userPrompt, base64Image = null) {
+            // Check Limits
+            if (!currentUser.isPremium && currentUser.aiUsage >= 10) {
+                return "لقد استنفدت محاولاتك المجانية (10/10). برجاء الترقية للحصول على عدد غير محدود من الأسئلة!";
             }
 
-            document.getElementById('auth-container').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
+            const messages = [
+                { role: "system", content: "أنت كيمو AI، المساعد الذكي الرسمي لتطبيق KimoUp. رد بذكاء وبطريقة ممتعة باللغة العربية. لو المستخدم أرسل صورة، حللها بدقة." }
+            ];
 
-            onSnapshot(userRef, (docSnap) => {
-                if(!docSnap.exists()) return;
-                currentUser = Object.assign({ email: docSnap.id }, docSnap.data());
-                if(isAdmin) currentUser.isAdmin = true;
+            if (base64Image) {
+                messages.push({
+                    role: "user",
+                    content: [
+                        { type: "text", text: userPrompt || "ماذا يوجد في هذه الصورة؟" },
+                        { type: "image_url", image_url: { url: base64Image } }
+                    ]
+                });
+            } else {
+                messages.push({ role: "user", content: userPrompt });
+            }
+
+            try {
+                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${GROQ_API_KEY}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        model: base64Image ? "llama-3.2-11b-vision-preview" : "llama3-8b-8192",
+                        messages: messages,
+                        temperature: 0.7
+                    })
+                });
+
+                const data = await response.json();
                 
-                document.getElementById('user-name-display').innerText = currentUser.name;
-                document.getElementById('user-x-balance').innerHTML = `<i class="fa-solid fa-coins mr-1"></i> X: ${currentUser.xCoins}`;
-                document.getElementById('user-badge').innerText = currentUser.badge || "";
-                if (currentUser.avatar) document.getElementById('user-img').src = currentUser.avatar;
-                if (currentUser.isAdmin) document.getElementById('admin-btn').classList.remove('hidden');
-                
-                renderSidebar();
-                checkInviteLink(); // فحص إذا كان هناك رابط دعوة لجروب
+                // Update Usage Counter
+                if (!currentUser.isPremium) {
+                    await updateDoc(doc(db, "users", currentUser.email), { aiUsage: currentUser.aiUsage + 1 });
+                }
+
+                return data.choices[0].message.content;
+            } catch (err) {
+                console.error(err);
+                return "عذراً يا بطل، حصل خطأ في الاتصال بالسيرفر. تأكد من الـ API Key.";
+            }
+        }
+
+        // ---------------------------------------------------------
+        // 3. Chat Core
+        // ---------------------------------------------------------
+        window.startAIChat = () => {
+            activeChat = { email: AI_EMAIL, name: "كيمو AI (Vision)", avatar: "" };
+            setupChatUI();
+            loadMessages(getChatId(AI_EMAIL));
+        };
+
+        function setupChatUI() {
+            document.getElementById('chat-header').classList.remove('hidden');
+            document.getElementById('input-area').classList.remove('hidden');
+            document.getElementById('chat-title').innerText = activeChat.name;
+            document.getElementById('chat-avatar').src = activeChat.avatar || 'https://cdn-icons-png.flaticon.com/512/4712/4712139.png';
+            
+            const upBtn = document.getElementById('upgrade-btn');
+            if (!currentUser.isPremium) upBtn.classList.remove('hidden');
+            else upBtn.classList.add('hidden');
+        }
+
+        window.handleSend = async () => {
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if (!text && !currentBase64Image) return;
+
+            const tempText = text;
+            const tempImg = currentBase64Image;
+
+            input.value = "";
+            clearImage();
+            
+            // 1. Save User Message
+            await saveMsg(currentUser.email, tempText, tempImg);
+
+            // 2. Handle AI Reply if chatting with AI
+            if (activeChat.email === AI_EMAIL) {
+                document.getElementById('ai-typing').classList.remove('hidden');
+                const reply = await callGroqAI(tempText, tempImg);
+                document.getElementById('ai-typing').classList.add('hidden');
+                await saveMsg(AI_EMAIL, reply);
+                speak(reply); // نطق الرد
+            }
+        };
+
+        async function saveMsg(sender, text, img = null) {
+            const chatId = getChatId(activeChat.email);
+            await addDoc(collection(db, "chats", chatId, "messages"), {
+                sender, text, img, time: serverTimestamp()
             });
         }
 
-        window.handleSignIn = async () => {
-            const email = document.getElementById('email').value.trim();
-            const pass = document.getElementById('password').value;
-            if(!email || !pass) return showToast("أدخل بياناتك أولاً", "error");
-            try {
-                if (email === "kareemwael0216@gmail.com" && pass === "K_425422") {
-                    await enterApp(email, true);
-                } else {
-                    const res = await signInWithEmailAndPassword(auth, email, pass);
-                    await enterApp(res.user.email, false);
-                }
-                showToast("تم تسجيل الدخول بنجاح", "success");
-            } catch (e) { showToast("خطأ في البريد أو كلمة المرور", "error"); }
-        };
-
-        window.handleSignUp = async () => {
-            const email = document.getElementById('email').value.trim();
-            const pass = document.getElementById('password').value;
-            if(pass.length < 6) return showToast("كلمة المرور يجب أن تكون 6 أحرف على الأقل", "error");
-            try {
-                await createUserWithEmailAndPassword(auth, email, pass);
-                await setDoc(doc(db, "users", email), { email, name: email.split('@')[0], avatar: "", xCoins: 0, badge: "", contacts: [], isOnline: true });
-                showToast("تم إنشاء الحساب! سجل دخولك الآن.", "success");
-            } catch (e) { showToast("هذا البريد مستخدم مسبقاً", "error"); }
-        };
-
-        window.handleSignOut = async () => {
-            if(currentUser) await setOnlineStatus(currentUser.email, false);
-            signOut(auth).then(() => location.href = location.pathname); // يمسح الـ URL parameters
-        };
-
-        // ----------------------------------------------------------------------
-        // 2. نظام التبويبات والقائمة الجانبية (Tabs & Sidebar)
-        // ----------------------------------------------------------------------
-        window.switchTab = (tab) => {
-            currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
-            
-            document.getElementById('contacts-list').style.display = tab === 'chats' ? 'block' : 'none';
-            document.getElementById('groups-list').style.display = tab === 'groups' ? 'block' : 'none';
-            
-            renderSidebarActionArea();
-            renderSidebar();
-        };
-
-        function renderSidebarActionArea() {
-            const area = document.getElementById('sidebar-action-area');
-            if (currentTab === 'chats') {
-                area.innerHTML = `
-                    <div class="flex gap-2">
-                        <input type="email" id="target-email" placeholder="أضف صديق بالإيميل" class="flex-1 p-3 text-xs bg-gray-50 rounded-xl outline-none focus:ring-2 ring-indigo-200 transition">
-                        <button onclick="addNewContact()" class="bg-indigo-600 text-white px-4 rounded-xl hover:bg-indigo-700 transition shadow-md"><i class="fa-solid fa-user-plus"></i></button>
-                    </div>`;
-            } else {
-                area.innerHTML = `
-                    <button onclick="openCreateGroupModal()" class="w-full p-3 bg-purple-100 text-purple-700 font-bold rounded-xl hover:bg-purple-200 transition flex justify-center items-center gap-2 border border-purple-200">
-                        <i class="fa-solid fa-plus-circle"></i> إنشاء مجتمع جديد
-                    </button>`;
-            }
-        }
-
-        window.addNewContact = async () => {
-            const email = document.getElementById('target-email').value.trim();
-            if(!email || email === currentUser.email) return showToast("إيميل غير صالح", "error");
-            const check = await getDoc(doc(db, "users", email));
-            if(check.exists()) {
-                await updateDoc(doc(db, "users", currentUser.email), { contacts: arrayUnion(email) });
-                document.getElementById('target-email').value = "";
-                showToast("تم إضافة الصديق بنجاح", "success");
-            } else { showToast("الإيميل غير مسجل في KimoUp", "error"); }
-        };
-
-        async function renderSidebar() {
-            // Load Chats
-            if (currentTab === 'chats') {
-                const container = document.getElementById('contacts-list');
-                container.innerHTML = "";
-                const list = currentUser.contacts || [];
-                for (const email of list) {
-                    const uDoc = await getDoc(doc(db, "users", email));
-                    if(uDoc.exists()) {
-                        const data = Object.assign({ email: uDoc.id }, uDoc.data());
-                        const div = document.createElement('div');
-                        div.className = "flex items-center gap-4 p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-50 transition";
-                        div.innerHTML = `
-                            <div class="relative">
-                                <img src="${data.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="w-12 h-12 rounded-xl object-cover shadow-sm bg-white">
-                                ${data.isOnline ? '<div class="online-dot"></div>' : ''}
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-bold text-gray-800">${data.name} ${data.badge || ''}</p>
-                                <p class="text-[10px] text-gray-400 mt-1">${data.isOnline ? 'متصل الآن' : 'غير متصل'}</p>
-                            </div>
-                        `;
-                        div.onclick = () => openChat(data, 'direct');
-                        container.appendChild(div);
-                    }
-                }
-            } 
-            // Load Groups
-            else {
-                const container = document.getElementById('groups-list');
-                const q = query(collection(db, "groups"), where("members", "array-contains", currentUser.email));
-                onSnapshot(q, (snap) => {
-                    if (currentTab !== 'groups') return; // Prevent render if tab changed
-                    container.innerHTML = "";
-                    if(snap.empty) container.innerHTML = `<p class="text-center text-xs text-gray-400 mt-10">لا توجد جروبات حالياً</p>`;
-                    snap.forEach(gDoc => {
-                        const gData = Object.assign({ id: gDoc.id }, gDoc.data());
-                        const icon = gData.type === 'channel' ? 'fa-bullhorn text-amber-500' : 'fa-users text-purple-500';
-                        const div = document.createElement('div');
-                        div.className = "flex items-center gap-4 p-4 hover:bg-purple-50 cursor-pointer border-b border-gray-50 transition";
-                        div.innerHTML = `
-                            <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center shadow-sm">
-                                <i class="fa-solid ${icon} text-xl"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-bold text-gray-800">${gData.name}</p>
-                                <p class="text-[10px] text-gray-400 mt-1">${gData.members.length} عضو</p>
-                            </div>
-                        `;
-                        div.onclick = () => openChat(gData, 'group');
-                        container.appendChild(div);
-                    });
-                });
-            }
-        }
-
-        // ----------------------------------------------------------------------
-        // 3. نظام الجروبات والروابط (Groups & Invite Links)
-        // ----------------------------------------------------------------------
-        window.openCreateGroupModal = () => document.getElementById('modal-group').classList.remove('hidden');
-        
-        window.createGroup = async () => {
-            const name = document.getElementById('group-name').value.trim();
-            const type = document.getElementById('group-type').value;
-            if(!name) return showToast("أدخل اسم المجتمع", "error");
-            
-            const docRef = await addDoc(collection(db, "groups"), {
-                name, type, admin: currentUser.email, members: [currentUser.email], createdAt: serverTimestamp()
-            });
-            
-            closeModals();
-            showToast("تم الإنشاء بنجاح", "success");
-            switchTab('groups');
-        };
-
-        window.copyGroupLink = () => {
-            if(chatType !== 'group' || !activeChat) return;
-            const link = `${window.location.origin}${window.location.pathname}?join=${activeChat.id}`;
-            navigator.clipboard.writeText(link);
-            showToast("تم نسخ رابط الدعوة!", "success");
-        };
-
-        async function checkInviteLink() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const joinId = urlParams.get('join');
-            if(joinId && currentUser) {
-                const gRef = doc(db, "groups", joinId);
-                const gSnap = await getDoc(gRef);
-                if(gSnap.exists()) {
-                    const gData = gSnap.data();
-                    if(!gData.members.includes(currentUser.email)) {
-                        const confirmJoin = confirm(`هل تريد الانضمام إلى ${gData.type === 'channel' ? 'قناة' : 'جروب'} "${gData.name}"؟`);
-                        if(confirmJoin) {
-                            await updateDoc(gRef, { members: arrayUnion(currentUser.email) });
-                            showToast("تم الانضمام بنجاح!", "success");
-                            switchTab('groups');
-                        }
-                    }
-                }
-                // مسح الرابط لمنع التكرار
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        }
-
-        // ----------------------------------------------------------------------
-        // 4. فتح المحادثة ونظام الرسائل (Chat Logic & Read Receipts)
-        // ----------------------------------------------------------------------
-        function getChatId(targetEmail) {
-            return [currentUser.email, targetEmail].sort().join('_');
-        }
-
-        function openChat(target, type) {
-            activeChat = target;
-            chatType = type;
-            document.getElementById('welcome-screen').classList.add('hidden');
-            document.getElementById('chat-ui').classList.remove('hidden');
-            
-            const uiImg = document.getElementById('target-img');
-            const uiName = document.getElementById('target-name');
-            const uiSub = document.getElementById('target-subtitle');
-            const uiOnline = document.getElementById('target-online-status');
-            const btnLink = document.getElementById('group-link-btn');
-            const btnGift = document.getElementById('gift-btn');
-            const channelOverlay = document.getElementById('channel-overlay');
-            const inputArea = document.getElementById('chat-input-area');
-
-            if (type === 'direct') {
-                uiImg.src = target.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                uiName.innerHTML = `${target.name} <span class="text-sm">${target.badge || ''}</span>`;
-                uiSub.innerText = target.email;
-                btnLink.classList.add('hidden');
-                btnGift.classList.remove('hidden');
-                channelOverlay.classList.add('hidden');
-                inputArea.classList.remove('hidden');
-                
-                // Realtime Online Status Listener
-                onSnapshot(doc(db, "users", target.email), (snap) => {
-                    if(snap.exists() && snap.data().isOnline) uiOnline.classList.remove('hidden');
-                    else uiOnline.classList.add('hidden');
-                });
-
-                loadMessages(getChatId(target.email), "chats");
-            } 
-            else if (type === 'group') {
-                const isChannel = target.type === 'channel';
-                const isAdmin = target.admin === currentUser.email;
-                
-                uiImg.src = 'https://cdn-icons-png.flaticon.com/512/1256/1256650.png'; // Group icon
-                uiName.innerText = target.name;
-                uiSub.innerText = `${target.members.length} أعضاء - ${isChannel ? 'قناة' : 'جروب عام'}`;
-                uiOnline.classList.add('hidden');
-                
-                btnLink.classList.remove('hidden');
-                btnGift.classList.add('hidden'); // الهدايا في الخاص فقط
-                
-                if(isChannel && !isAdmin) {
-                    inputArea.classList.add('hidden');
-                    channelOverlay.classList.remove('hidden');
-                } else {
-                    inputArea.classList.remove('hidden');
-                    channelOverlay.classList.add('hidden');
-                }
-
-                loadMessages(target.id, "groups");
-            }
-        }
-
-        function loadMessages(collectionId, parentCollection) {
-            if(activeSnapshotUnsubscribe) activeSnapshotUnsubscribe(); // Stop previous listener
-
-            const q = query(collection(db, parentCollection, collectionId, "messages"), orderBy("time", "asc"));
-            
-            activeSnapshotUnsubscribe = onSnapshot(q, (snap) => {
-                const box = document.getElementById('messages-area');
+        function loadMessages(chatId) {
+            const q = query(collection(db, "chats", chatId, "messages"), orderBy("time", "asc"), limit(50));
+            onSnapshot(q, (snap) => {
+                const box = document.getElementById('msg-box');
                 box.innerHTML = "";
-                
-                snap.forEach(mDoc => {
-                    const m = mDoc.data();
-                    const msgId = mDoc.id;
+                snap.forEach(doc => {
+                    const m = doc.data();
                     const isMe = m.sender === currentUser.email;
-                    
-                    // تحديث حالة الرسالة إلى "مقروءة" لو الشخص التاني فاتحها (للخاص فقط)
-                    if(!isMe && m.status === 'sent' && chatType === 'direct') {
-                        updateDoc(mDoc.ref, { status: 'read' });
-                    }
-
                     const div = document.createElement('div');
-                    const wrapperClass = isMe ? 'self-end flex flex-col items-end' : 'self-start flex flex-col items-start';
-                    div.className = wrapperClass;
+                    div.className = isMe ? "self-end" : "self-start";
                     
-                    // شكل مؤشر القراءة
-                    const statusIcon = chatType === 'direct' && isMe ? 
-                        (m.status === 'read' ? '<i class="fa-solid fa-check-double text-blue-300 ml-1 text-[10px]"></i>' : '<i class="fa-solid fa-check text-indigo-200 ml-1 text-[10px]"></i>') 
-                        : '';
-                    
-                    // اسم المرسل في الجروبات
-                    const senderNameLabel = (!isMe && chatType === 'group') ? `<p class="text-[10px] font-bold text-indigo-500 mb-1 ml-2">${m.senderName}</p>` : '';
-
-                    let contentHTML = '';
-                    const bubbleClass = `msg-bubble max-w-[85%] sm:max-w-[70%] p-3 rounded-2xl shadow-sm ${isMe ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none'}`;
-
-                    if (m.type === 'gift') {
-                        const isClaimed = m.status === 'claimed';
-                        contentHTML = `
-                            <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 p-6 rounded-3xl text-center shadow-lg my-2 w-64">
-                                <div class="${isClaimed ? 'gift-claimed' : 'gift-bear'}" onclick="claimGift('${msgId}', ${m.amount}, ${isMe}, '${m.status}', '${collectionId}')">🧸</div>
-                                <div class="mt-4 bg-white/60 p-2 rounded-xl backdrop-blur-sm">
-                                    <p class="text-xs font-black text-amber-700">دبدوب يحتوي على ${m.amount} X</p>
-                                    <p class="text-[9px] font-bold text-gray-500 mt-1">${isClaimed ? 'تم الاستلام ❌' : (isMe ? 'أرسلت هدية' : 'اضغط للاستلام')}</p>
-                                </div>
-                            </div>
-                        `;
-                    } else if (m.type === 'image') {
-                        contentHTML = `<div class="${bubbleClass} p-1"><img src="${m.url}" onclick="window.open('${m.url}')"><div class="text-left mt-1 px-2">${statusIcon}</div></div>`;
-                    } else if (m.type === 'voice') {
-                        contentHTML = `<div class="${bubbleClass} flex items-center gap-2">
-                                        <audio controls src="${m.audio}" class="h-8 w-48"></audio>
-                                        ${statusIcon}
-                                       </div>`;
-                    } else {
-                        // Text message
-                        contentHTML = `<div class="${bubbleClass}">
-                                        <p class="text-sm">${m.text}</p>
-                                        <div class="text-left mt-1 text-[10px] opacity-70">${statusIcon}</div>
-                                       </div>`;
-                    }
-
-                    div.innerHTML = senderNameLabel + contentHTML;
+                    div.innerHTML = `
+                        <div class="msg-bubble ${isMe ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-slate-800 text-slate-100 rounded-bl-none border border-slate-700 shadow-xl'}">
+                            ${m.img ? `<img src="${m.img}" class="w-64 h-auto rounded-xl mb-2 border border-white/10">` : ''}
+                            <p class="text-sm leading-relaxed">${m.text}</p>
+                        </div>
+                    `;
                     box.appendChild(div);
-
-                    // Push Notification for background reading
-                    if (!isMe && document.hidden && m.status !== 'read') {
-                        new Notification(chatType === 'group' ? activeChat.name : m.senderName, { body: m.type === 'text' ? m.text : 'رسالة جديدة', icon: "/favicon.ico" });
-                    }
                 });
-                
                 box.scrollTop = box.scrollHeight;
             });
         }
 
-        // ----------------------------------------------------------------------
-        // 5. الإرسال (Text, Voice, Files, Gifts)
-        // ----------------------------------------------------------------------
-        async function saveMessageToDB(msgData) {
-            if(!activeChat) return;
-            const parent = chatType === 'group' ? 'groups' : 'chats';
-            const id = chatType === 'group' ? activeChat.id : getChatId(activeChat.email);
-            
-            const payload = {
-                ...msgData,
-                sender: currentUser.email,
-                senderName: currentUser.name,
-                time: serverTimestamp(),
-                status: 'sent' // sent, read, claimed
-            };
-            await addDoc(collection(db, parent, id, "messages"), payload);
-        }
-
-        window.sendMessage = async () => {
-            const el = document.getElementById('msg-input');
-            const txt = el.value.trim();
-            if(!txt) return;
-            el.value = "";
-            document.getElementById('emoji-picker').style.display = 'none';
-            await saveMessageToDB({ type: 'text', text: txt });
-        };
-
-        // Textarea Enter key support
-        document.getElementById('msg-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
+        // ---------------------------------------------------------
+        // 4. Premium & Helpers
+        // ---------------------------------------------------------
+        window.upgradePrompt = async () => {
+            if (currentUser.xCoins < PREMIUM_COST) {
+                toast(`تحتاج لـ ${PREMIUM_COST} عملة للترقية. رصيدك الحالي: ${currentUser.xCoins}`, "error");
+                return;
             }
-        });
-
-        window.sendImageMsg = () => {
-            const file = document.getElementById('chat-file-input').files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-                showToast("جاري إرسال الصورة...", "info");
-                await saveMessageToDB({ type: 'image', url: reader.result });
-            };
-            reader.readAsDataURL(file);
-        };
-
-        const vBtn = document.getElementById('voice-btn');
-        vBtn.onmousedown = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start();
-                audioChunks = [];
-                vBtn.classList.add('bg-red-500', 'text-white', 'animate-pulse');
-                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-                mediaRecorder.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
-                    const reader = new FileReader();
-                    reader.readAsDataURL(audioBlob);
-                    reader.onloadend = async () => {
-                        await saveMessageToDB({ type: 'voice', audio: reader.result });
-                    };
-                };
-            } catch (e) { showToast("يجب إعطاء صلاحية الميكروفون", "error"); }
-        };
-        vBtn.onmouseup = () => {
-            if(mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-                vBtn.classList.remove('bg-red-500', 'text-white', 'animate-pulse');
+            if (confirm(`هل تريد الترقية للبريميوم مقابل ${PREMIUM_COST} عملة؟ ستحصل على ذكاء اصطناعي بلا حدود!`)) {
+                await updateDoc(doc(db, "users", currentUser.email), {
+                    isPremium: true,
+                    xCoins: currentUser.xCoins - PREMIUM_COST
+                });
+                confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+                toast("مبروك! أنت الآن مستخدم بريميوم 👑", "success");
             }
         };
 
-        // نظام الهدايا الذكي (الاستلام مرة واحدة فقط)
-        window.sendXGift = async () => {
-            if(chatType !== 'direct') return;
-            const amount = parseInt(prompt("كمية X داخل الدبدوب:"));
-            if(isNaN(amount) || amount <= 0) return;
-            if(currentUser.xCoins < amount) return showToast("رصيد غير كافٍ", "error");
-            
-            await updateDoc(doc(db, "users", currentUser.email), { xCoins: currentUser.xCoins - amount });
-            await saveMessageToDB({ type: 'gift', amount: amount, status: 'sent' });
-            showToast("تم إرسال الدبدوب بنجاح!", "success");
-        };
-
-        window.claimGift = async (msgId, amount, isMe, status, collectionId) => {
-            if (status === 'claimed') return showToast("تم استلام هذه الهدية مسبقاً!", "error");
-            if (isMe) return showToast("الهدية لصديقك وليست لك يا هندسة!", "info");
-            
-            try {
-                // Update receiver balance
-                await updateDoc(doc(db, "users", currentUser.email), { xCoins: currentUser.xCoins + amount });
-                // Update message status so it can't be claimed again
-                await updateDoc(doc(db, "chats", collectionId, "messages", msgId), { status: 'claimed', claimedBy: currentUser.email });
-                
-                confetti({ particleCount: 300, spread: 150, origin: { y: 0.6 } });
-                showToast(`مبروك! استلمت ${amount} عملة X 🧸`, "success");
-            } catch (e) { showToast("حدث خطأ أثناء الاستلام", "error"); }
-        };
-
-        // ----------------------------------------------------------------------
-        // 6. واجهة المستخدم والموديلز (UI Helpers)
-        // ----------------------------------------------------------------------
-        window.toggleEmoji = () => {
-            const p = document.getElementById('emoji-picker');
-            p.style.display = p.style.display === 'grid' ? 'none' : 'grid';
-        };
-        window.addEmoji = (e) => {
-            const input = document.getElementById('msg-input');
-            input.value += e;
-            input.focus();
-        };
-
-        window.openSettings = () => {
-            if(!currentUser) return;
-            document.getElementById('set-name').value = currentUser.name;
-            document.getElementById('set-badge').value = currentUser.badge || "";
-            document.getElementById('preview-img').src = currentUser.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-            document.getElementById('modal-settings').classList.remove('hidden');
-        };
-
-        window.previewAvatar = () => {
-            const file = document.getElementById('avatar-input').files[0];
-            if(file) {
+        window.handleImage = (input) => {
+            const file = input.files[0];
+            if (file) {
                 const reader = new FileReader();
-                reader.onloadend = () => {
-                    base64Avatar = reader.result;
-                    document.getElementById('preview-img').src = base64Avatar;
+                reader.onload = (e) => {
+                    currentBase64Image = e.target.result;
+                    document.getElementById('image-preview-box').classList.remove('hidden');
+                    document.getElementById('img-prev').src = currentBase64Image;
                 };
                 reader.readAsDataURL(file);
             }
         };
 
-        window.updateProfile = async () => {
-            const name = document.getElementById('set-name').value;
-            const badge = document.getElementById('set-badge').value;
-            const updateData = { name, badge };
-            if (base64Avatar) updateData.avatar = base64Avatar;
-            
-            await updateDoc(doc(db, "users", currentUser.email), updateData);
-            closeModals();
-            showToast("تم تحديث البروفايل!", "success");
+        window.clearImage = () => {
+            currentBase64Image = null;
+            document.getElementById('image-preview-box').classList.add('hidden');
+            document.getElementById('file-input').value = "";
         };
 
-        window.toggleAdminPanel = () => document.getElementById('admin-panel').classList.toggle('hidden');
-        window.closeModals = () => document.querySelectorAll('[id^="modal-"], #admin-panel').forEach(m => m.classList.add('hidden'));
+        function getChatId(target) {
+            return [currentUser.email, target].sort().join("_");
+        }
 
-        window.adminAction = async (type) => {
-            const email = document.getElementById('admin-user').value.trim();
-            const ref = doc(db, "users", email);
-            const snap = await getDoc(ref);
-            if(!snap.exists()) return showToast("المستخدم غير موجود", "error");
+        function toast(m, type = 'info') {
+            const l = document.getElementById('toast-layer');
+            const d = document.createElement('div');
+            d.className = `p-4 rounded-2xl shadow-2xl text-xs font-bold border ${type === 'error' ? 'bg-red-500/20 border-red-500 text-red-400' : 'bg-indigo-500/20 border-indigo-500 text-indigo-300'} animate-bounce`;
+            d.innerText = m;
+            l.appendChild(d);
+            setTimeout(() => d.remove(), 4000);
+        }
 
-            if(type === 'coins') {
-                const val = parseInt(document.getElementById('admin-amount').value);
-                await updateDoc(ref, { xCoins: (snap.data().xCoins || 0) + val });
-                showToast(`تم شحن ${val} لـ ${email}`, "success");
-            }
-        };
+        function speak(text) {
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'ar-SA';
+            window.speechSynthesis.speak(msg);
+        }
 
-        // Initialize Tab
-        renderSidebarActionArea();
+        // Sidebar rendering
+        async function renderSidebar() {
+            const cont = document.getElementById('contacts-container');
+            cont.innerHTML = "";
+            (currentUser.contacts || []).forEach(email => {
+                const div = document.createElement('div');
+                div.className = "p-3 rounded-xl hover:bg-slate-800 cursor-pointer text-sm font-medium transition";
+                div.innerText = email;
+                div.onclick = () => {
+                    activeChat = { email, name: email.split('@')[0] };
+                    setupChatUI();
+                    loadMessages(getChatId(email));
+                };
+                cont.appendChild(div);
+            });
+        }
     </script>
 </body>
 </html>
