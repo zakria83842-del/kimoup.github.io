@@ -3,109 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TeleKimo | Official Auth</title>
+    <title>KimoUp | كيمو أب</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --tg-primary: #0088cc; --tg-bg: #f0f2f5; }
-        body { background-color: var(--tg-bg); font-family: sans-serif; overflow: hidden; }
-        .chat-pattern { background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); opacity: 0.08; position: absolute; inset: 0; z-index: 0; }
-        .glass-effect { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
-        .animated-emoji { display: inline-block; animation: bounce 1.5s infinite ease-in-out; font-size: 1.5rem; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        :root { --main: #6366f1; --accent: #f59e0b; --bg: #f8fafc; }
+        body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        .kimo-logo { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
+        .gift-msg { animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px border-orange-200; }
+        @keyframes pop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .chat-bg { background-color: #e5e7eb; background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.4; position: absolute; inset: 0; z-index: 0; }
+        .sidebar-item:hover { background-color: #f1f5f9; }
+        .admin-badge { background: linear-gradient(45deg, #ef4444, #f59e0b); color: white; padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: bold; }
     </style>
 </head>
 <body class="h-screen flex items-center justify-center">
 
-    <div id="auth-container" class="z-50 w-full max-w-md p-8 bg-white rounded-3xl shadow-2xl mx-4">
-        <div class="text-center mb-8">
-            <div class="w-20 h-20 bg-[#0088cc] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-white text-4xl">
-                <i class="fa-brands fa-telegram"></i>
-            </div>
-            <h1 class="text-3xl font-black text-gray-800">TeleKimo</h1>
-            <p id="auth-status" class="text-gray-500 mt-2">سجل دخولك للبدء</p>
+    <div id="auth-container" class="z-50 w-full max-w-md p-10 bg-white rounded-[2.5rem] shadow-2xl mx-4 text-center">
+        <div class="w-24 h-24 kimo-logo rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl rotate-3 hover:rotate-0 transition-transform">
+            <i class="fa-solid fa-rocket text-white text-5xl"></i>
         </div>
+        <h1 class="text-4xl font-black text-gray-800 tracking-tight">KimoUp</h1>
+        <p class="text-gray-400 mt-2 mb-8 font-medium">الجيل القادم من التواصل</p>
 
         <div class="space-y-4">
-            <input type="email" id="email" placeholder="البريد الإلكتروني" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 ring-blue-400">
-            <input type="password" id="password" placeholder="كلمة المرور" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 ring-blue-400">
-            
-            <div class="flex gap-2">
-                <button onclick="handleSignIn()" class="flex-1 bg-[#0088cc] text-white p-4 rounded-2xl font-bold hover:bg-blue-600 transition">دخول</button>
-                <button onclick="handleSignUp()" class="flex-1 bg-gray-100 text-gray-700 p-4 rounded-2xl font-bold hover:bg-gray-200 transition">تسجيل جديد</button>
+            <input type="email" id="email" placeholder="البريد الإلكتروني" class="w-full p-4 bg-gray-50 border-none rounded-2xl outline-none focus:ring-2 ring-indigo-500">
+            <input type="password" id="password" placeholder="كلمة المرور" class="w-full p-4 bg-gray-50 border-none rounded-2xl outline-none focus:ring-2 ring-indigo-500">
+            <div class="flex gap-3">
+                <button onclick="handleSignIn()" class="flex-1 bg-indigo-600 text-white p-4 rounded-2xl font-bold hover:bg-indigo-700 shadow-lg transition">دخول</button>
+                <button onclick="handleSignUp()" class="flex-1 bg-white border-2 border-gray-100 text-gray-600 p-4 rounded-2xl font-bold hover:bg-gray-50 transition">تسجيل</button>
             </div>
-            <p class="text-[10px] text-center text-gray-400">عند التسجيل الجديد، سيصلك رابط توثيق على إيميلك</p>
         </div>
     </div>
 
     <div id="app-container" class="hidden w-full h-screen flex bg-white overflow-hidden">
-        <div class="w-80 border-l flex flex-col bg-white z-10 shadow-xl">
-            <div class="p-5 bg-[#0088cc] text-white flex justify-between items-center">
+        <div class="w-80 border-l flex flex-col bg-white z-10 shadow-2xl">
+            <div class="p-6 bg-indigo-600 text-white">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-black italic">KimoUp</h2>
+                    <button onclick="toggleAdminPanel()" id="admin-btn" class="hidden w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center hover:bg-white/30 transition">
+                        <i class="fa-solid fa-crown text-yellow-300"></i>
+                    </button>
+                </div>
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold" id="user-initial">U</div>
+                    <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center font-bold text-xl" id="user-initial">?</div>
                     <div>
-                        <p id="user-name" class="font-bold text-sm">User</p>
-                        <p id="user-coins" class="text-[10px] text-yellow-300 font-bold">X: 0</p>
+                        <div class="flex items-center gap-1">
+                            <p id="user-name" class="font-bold"></p>
+                            <span id="admin-indicator" class="hidden admin-badge">ADMIN</span>
+                        </div>
+                        <p id="user-coins" class="text-sm text-indigo-200 font-medium">X: 0</p>
                     </div>
                 </div>
-                <button onclick="toggleAdminPanel()" id="admin-btn" class="hidden text-xl"><i class="fa-solid fa-user-shield"></i></button>
+            </div>
+
+            <div class="p-4 bg-gray-50 flex gap-2">
+                <input type="email" id="add-contact-email" placeholder="أضف صديق بالإيميل..." class="flex-1 p-2 text-xs bg-white border rounded-xl outline-none">
+                <button onclick="addContact()" class="bg-indigo-600 text-white px-3 rounded-xl hover:bg-indigo-700 transition"><i class="fa-solid fa-plus"></i></button>
             </div>
             
-            <div class="flex-1 overflow-y-auto p-2" id="users-list">
+            <div class="flex-1 overflow-y-auto" id="contacts-list">
                 </div>
 
-            <div class="p-4 border-t gap-2 flex flex-col">
-                <button onclick="showPremiumModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold shadow-lg">طلب Premium ⭐</button>
-                <button onclick="handleSignOut()" class="text-xs text-red-400 font-medium">تسجيل الخروج</button>
+            <div class="p-4 border-t gap-2 flex flex-col bg-gray-50">
+                <button onclick="showPremiumModal()" class="w-full py-3 rounded-2xl bg-indigo-600 text-white font-bold shadow-indigo-200 shadow-lg hover:scale-[1.02] transition">ترقية الحساب ⭐</button>
+                <button onclick="handleSignOut()" class="text-xs text-gray-400 text-center font-bold">تسجيل الخروج</button>
             </div>
         </div>
 
-        <div class="flex-1 flex flex-col relative bg-[#e5e7eb]">
-            <div class="chat-pattern"></div>
+        <div class="flex-1 flex flex-col relative">
+            <div class="chat-bg"></div>
+            
             <div id="chat-welcome" class="absolute inset-0 flex items-center justify-center z-10 text-gray-400 flex-col">
-                <i class="fa-regular fa-comments text-6xl mb-4"></i>
-                <p>اختر صديقاً لبدء المحادثة</p>
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="fa-solid fa-rocket text-4xl text-gray-300"></i>
+                </div>
+                <p class="font-medium">ابدأ رحلتك في KimoUp</p>
             </div>
 
-            <div id="active-chat-ui" class="hidden h-full flex flex-col z-10">
-                <div class="p-4 glass-effect border-b flex justify-between items-center shadow-sm">
+            <div id="active-chat-ui" class="hidden h-full flex flex-col z-10 relative">
+                <div class="p-4 glass-effect border-b flex justify-between items-center px-8">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold" id="target-initial">?</div>
-                        <h3 id="target-name" class="font-bold">Chat</h3>
+                        <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 font-bold" id="target-initial">?</div>
+                        <h3 id="target-name" class="font-black text-gray-700">Chat</h3>
                     </div>
+                    <button onclick="sendGift()" class="bg-orange-100 text-orange-600 px-4 py-2 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-orange-200 transition">
+                        <i class="fa-solid fa-gift"></i> إرسال هدية
+                    </button>
                 </div>
 
-                <div id="msg-box" class="flex-1 p-6 overflow-y-auto flex flex-col gap-3"></div>
+                <div id="msg-box" class="flex-1 p-8 overflow-y-auto flex flex-col gap-4"></div>
 
-                <div class="p-4 glass-effect flex gap-3 items-center">
-                    <input type="text" id="msg-input" placeholder="اكتب رسالة..." class="flex-1 p-4 rounded-2xl border-none shadow-inner outline-none focus:ring-2 ring-blue-500">
-                    <button onclick="sendMsg()" class="w-14 h-14 bg-[#0088cc] text-white rounded-2xl flex items-center justify-center shadow-lg hover:scale-105 transition"><i class="fa-solid fa-paper-plane text-xl"></i></button>
+                <div class="p-6 flex gap-3 items-center px-8">
+                    <div class="flex-1 relative">
+                        <input type="text" id="msg-input" placeholder="اكتب رسالتك هنا..." class="w-full p-4 pr-6 rounded-2xl border-none bg-white shadow-2xl outline-none focus:ring-2 ring-indigo-500">
+                    </div>
+                    <button onclick="sendMsg()" class="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-indigo-200 shadow-xl hover:scale-105 transition active:scale-95">
+                        <i class="fa-solid fa-paper-plane text-xl"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="modal-premium" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-[2rem] max-w-sm w-full text-center">
-            <h2 class="text-2xl font-black mb-4">تفعيل البريميوم</h2>
-            <p class="text-gray-500 mb-6 text-sm">لتفعيل حسابك أو شحن X Coins، تواصل مع الأدمن:</p>
-            <div class="bg-blue-50 p-5 rounded-2xl mb-6">
-                <p class="text-2xl font-bold text-[#0088cc]">01112215950</p>
+    <div id="modal-premium" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-10 rounded-[2.5rem] max-w-sm w-full text-center shadow-2xl">
+            <div class="w-20 h-20 bg-yellow-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-star text-4xl text-yellow-500"></i>
             </div>
-            <button onclick="closeModals()" class="w-full p-4 bg-gray-100 rounded-2xl font-bold">حسناً</button>
+            <h2 class="text-2xl font-black mb-2">تفعيل البريميوم</h2>
+            <p class="text-gray-500 mb-8 text-sm">للحصول على الميزات الحصرية وشحن العملات، تواصل مع المالك:</p>
+            <div class="bg-indigo-50 p-6 rounded-2xl mb-8">
+                <p class="text-2xl font-black text-indigo-600">01112215950</p>
+                <p class="text-xs text-indigo-300 mt-1 uppercase font-bold tracking-widest">Kimo Up Admin</p>
+            </div>
+            <button onclick="closeModals()" class="w-full p-4 bg-gray-100 rounded-2xl font-bold text-gray-500">إغلاق</button>
         </div>
     </div>
 
     <div id="modal-admin" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
-        <div class="bg-white p-6 rounded-[2rem] max-w-md w-full">
-            <h2 class="text-xl font-bold mb-4">لوحة تحكم كيمو 👑</h2>
-            <input type="email" id="admin-target" placeholder="إيميل المستخدم" class="w-full p-3 border rounded-xl mb-3">
-            <div class="flex gap-2 mb-3">
-                <input type="number" id="admin-coins" placeholder="إضافة X" class="flex-1 p-3 border rounded-xl">
-                <button onclick="adminAction('coins')" class="bg-yellow-500 text-white px-6 rounded-xl">شحن</button>
+        <div class="bg-white p-8 rounded-[2.5rem] max-w-md w-full shadow-2xl border-4 border-indigo-100">
+            <h2 class="text-2xl font-black mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-indigo-600"></i> لوحة التحكم
+            </h2>
+            <div class="space-y-4">
+                <input type="email" id="admin-target" placeholder="إيميل المستخدم المستهدف" class="w-full p-4 bg-gray-50 rounded-2xl outline-none">
+                <div class="flex gap-2">
+                    <input type="number" id="admin-coins" placeholder="إضافة X Coins" class="flex-1 p-4 bg-gray-50 rounded-2xl outline-none">
+                    <button onclick="adminAction('coins')" class="bg-indigo-600 text-white px-8 rounded-2xl font-bold">شحن</button>
+                </div>
+                <button onclick="adminAction('premium')" class="w-full bg-indigo-900 text-white p-4 rounded-2xl font-bold hover:bg-black transition">تفعيل بريميوم فوراً</button>
             </div>
-            <button onclick="adminAction('premium')" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold mb-2">تفعيل بريميوم فوراً</button>
-            <button onclick="closeModals()" class="w-full text-gray-400">إلغاء</button>
+            <button onclick="closeModals()" class="mt-6 w-full text-gray-400 font-bold">خروج من اللوحة</button>
         </div>
     </div>
 
@@ -130,26 +160,26 @@
         let currentUserData = null;
         let activeTarget = null;
 
-        // --- Authentication ---
+        // --- Auth Implementation ---
         window.handleSignUp = async () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
+            if(!email || !pass) return alert("املا البيانات");
             try {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 await sendEmailVerification(res.user);
-                // Create user profile in Firestore
                 await setDoc(doc(db, "users", email), {
-                    email, xCoins: 0, isPremium: false, name: email.split('@')[0]
+                    email, xCoins: 0, isPremium: false, name: email.split('@')[0], contacts: []
                 });
-                alert("تم التسجيل! افتح إيميلك واضغط على رابط التوثيق لتتمكن من الدخول.");
-            } catch (e) { alert("خطأ: " + e.message); }
+                alert("تفقد إيميلك واضغط على رابط التوثيق!");
+            } catch (e) { alert("خطأ في التسجيل"); }
         };
 
         window.handleSignIn = async () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
             
-            // Admin Bypass Logic
+            // Admin Check
             if(email === "kareemwael0216@gmail.com" && pass === "K_425422") {
                 loginSuccess({ email, isAdmin: true });
                 return;
@@ -160,59 +190,87 @@
                 if(res.user.emailVerified) {
                     loginSuccess(res.user);
                 } else {
-                    alert("يرجى توثيق حسابك من الإيميل أولاً!");
+                    alert("وثق الإيميل أولاً!");
                     await signOut(auth);
                 }
-            } catch (e) { alert("بيانات الدخول غير صحيحة"); }
+            } catch (e) { alert("بيانات خاطئة"); }
         };
 
         function loginSuccess(user) {
             document.getElementById('auth-container').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
             
-            // Listen to User Profile Changes
+            const isOwner = user.email === "kareemwael0216@gmail.com";
+
             onSnapshot(doc(db, "users", user.email), (snap) => {
+                if(!snap.exists()) return;
                 currentUserData = snap.data();
-                if(user.isAdmin) currentUserData.isAdmin = true;
+                if(isOwner) currentUserData.isAdmin = true;
                 
                 document.getElementById('user-name').innerText = currentUserData.name;
                 document.getElementById('user-coins').innerText = `X: ${currentUserData.xCoins}`;
                 document.getElementById('user-initial').innerText = currentUserData.name[0].toUpperCase();
-                if(currentUserData.isAdmin) document.getElementById('admin-btn').classList.remove('hidden');
+                
+                // Show Admin Panel Button for Kareem
+                if(currentUserData.isAdmin) {
+                    document.getElementById('admin-btn').classList.remove('hidden');
+                    document.getElementById('admin-indicator').classList.remove('hidden');
+                }
+                
+                loadContacts(currentUserData.contacts || []);
             });
-
-            loadUsers();
         }
 
-        window.handleSignOut = () => {
-            signOut(auth);
-            location.reload();
+        // --- Contacts System ---
+        window.addContact = async () => {
+            const emailToAdd = document.getElementById('add-contact-email').value;
+            if(!emailToAdd || emailToAdd === currentUserData.email) return;
+
+            const userRef = doc(db, "users", emailToAdd);
+            const userSnap = await getDoc(userRef);
+            
+            if(userSnap.exists()) {
+                const currentContacts = currentUserData.contacts || [];
+                if(!currentContacts.includes(emailToAdd)) {
+                    currentContacts.push(emailToAdd);
+                    await updateDoc(doc(db, "users", currentUserData.email), { contacts: currentContacts });
+                    document.getElementById('add-contact-email').value = "";
+                } else {
+                    alert("الصديق مضاف بالفعل!");
+                }
+            } else {
+                alert("الإيميل غير موجود في KimoUp");
+            }
         };
 
-        // --- Chat Logic ---
-        function loadUsers() {
-            onSnapshot(collection(db, "users"), (snap) => {
-                const list = document.getElementById('users-list');
-                list.innerHTML = "";
-                snap.forEach(uDoc => {
-                    if(uDoc.id !== currentUserData.email) {
-                        const data = uDoc.data();
-                        const item = document.createElement('div');
-                        item.className = "flex items-center gap-3 p-3 hover:bg-blue-50 cursor-pointer rounded-2xl transition";
-                        item.innerHTML = `
-                            <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-500">${data.name[0]}</div>
-                            <div>
-                                <p class="text-sm font-bold">${data.name} ${data.isPremium ? '⭐' : ''}</p>
-                                <p class="text-[10px] text-gray-400">متاح الآن</p>
-                            </div>
-                        `;
-                        item.onclick = () => openChat(data);
-                        list.appendChild(item);
-                    }
-                });
+        function loadContacts(contactEmails) {
+            const list = document.getElementById('contacts-list');
+            list.innerHTML = "";
+            if(contactEmails.length === 0) {
+                list.innerHTML = "<p class='p-4 text-xs text-gray-400 text-center'>لا يوجد أصدقاء. أضف إيميل لبدء المحادثة!</p>";
+            }
+            
+            contactEmails.forEach(async (email) => {
+                const uDoc = await getDoc(doc(db, "users", email));
+                const data = uDoc.data();
+                const item = document.createElement('div');
+                item.className = "sidebar-item flex items-center gap-3 p-4 cursor-pointer transition border-b border-gray-50";
+                item.innerHTML = `
+                    <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center font-bold text-indigo-600">${data.name[0]}</div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm font-bold">${data.name}</p>
+                            ${data.isPremium ? '<i class="fa-solid fa-certificate text-blue-400 text-[10px]"></i>' : ''}
+                        </div>
+                        <p class="text-[10px] text-gray-400">انقر للمراسلة</p>
+                    </div>
+                `;
+                item.onclick = () => openChat(data);
+                list.appendChild(item);
             });
         }
 
+        // --- Chat & Gift Implementation ---
         function openChat(target) {
             activeTarget = target;
             document.getElementById('chat-welcome').classList.add('hidden');
@@ -232,15 +290,19 @@
                     const m = mDoc.data();
                     const isMe = m.sender === currentUserData.email;
                     const div = document.createElement('div');
-                    div.className = `max-w-[80%] p-3 rounded-2xl text-sm ${isMe ? 'self-end bg-[#effdde] shadow-sm' : 'self-start bg-white shadow-sm'}`;
                     
-                    // Animated emojis for Premium users
-                    let content = m.text;
-                    if(currentUserData.isPremium) {
-                        content = content.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF])/g, '<span class="animated-emoji">$1</span>');
+                    if(m.type === 'gift') {
+                        div.className = `gift-msg max-w-[250px] p-4 rounded-3xl self-center text-center shadow-lg border-2 border-orange-200 my-4`;
+                        div.innerHTML = `
+                            <p class="text-2xl mb-1">🎁</p>
+                            <p class="font-black text-orange-700">هدية X Coins!</p>
+                            <p class="text-xs font-bold text-orange-600">+${m.amount} عملة</p>
+                            <p class="text-[9px] text-orange-400 mt-1">من: ${m.senderName}</p>
+                        `;
+                    } else {
+                        div.className = `max-w-[75%] p-4 rounded-[1.5rem] text-sm shadow-sm ${isMe ? 'self-end bg-indigo-600 text-white' : 'self-start bg-white text-gray-800'}`;
+                        div.innerHTML = m.text;
                     }
-                    
-                    div.innerHTML = content;
                     box.appendChild(div);
                 });
                 box.scrollTop = box.scrollHeight;
@@ -252,34 +314,67 @@
             if(!txt || !activeTarget) return;
             const chatId = [currentUserData.email, activeTarget.email].sort().join('_');
             await addDoc(collection(db, "chats", chatId, "messages"), {
-                sender: currentUserData.email, text: txt, time: serverTimestamp()
+                sender: currentUserData.email, text: txt, time: serverTimestamp(), type: 'text'
             });
             document.getElementById('msg-input').value = "";
         };
 
+        window.sendGift = async () => {
+            const amount = parseInt(prompt("أدخل كمية الـ X Coins التي تود إهداءها:"));
+            if(isNaN(amount) || amount <= 0) return;
+            
+            if(currentUserData.xCoins < amount) {
+                alert("رصيدك غير كافٍ!");
+                return;
+            }
+
+            const chatId = [currentUserData.email, activeTarget.email].sort().join('_');
+            
+            // 1. Subtract from sender
+            await updateDoc(doc(db, "users", currentUserData.email), { xCoins: currentUserData.xCoins - amount });
+            
+            // 2. Add to receiver
+            const targetSnap = await getDoc(doc(db, "users", activeTarget.email));
+            await updateDoc(doc(db, "users", activeTarget.email), { xCoins: (targetSnap.data().xCoins || 0) + amount });
+
+            // 3. Send Gift Message
+            await addDoc(collection(db, "chats", chatId, "messages"), {
+                sender: currentUserData.email,
+                senderName: currentUserData.name,
+                type: 'gift',
+                amount: amount,
+                time: serverTimestamp()
+            });
+
+            // Confetti Animation!
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        };
+
         // --- Admin Controls ---
         window.adminAction = async (type) => {
-            const email = document.getElementById('admin-target').value;
-            if(!email) return alert("ادخل الإيميل");
-            const ref = doc(db, "users", email);
+            const targetEmail = document.getElementById('admin-target').value;
+            const ref = doc(db, "users", targetEmail);
+            const snap = await getDoc(ref);
+            if(!snap.exists()) return alert("المستخدم مش موجود");
+
             if(type === 'coins') {
                 const val = parseInt(document.getElementById('admin-coins').value);
-                const s = await getDoc(ref);
-                await updateDoc(ref, { xCoins: (s.data().xCoins || 0) + val });
-                alert("تم الشحن!");
+                await updateDoc(ref, { xCoins: (snap.data().xCoins || 0) + val });
+                alert("تم شحن الرصيد");
             } else {
                 await updateDoc(ref, { isPremium: true });
-                alert("تم تفعيل البريميوم!");
+                alert("تم تفعيل البريميوم بنجاح");
             }
         };
 
-        // --- UI Helpers ---
+        // --- UI Logic ---
         window.showPremiumModal = () => document.getElementById('modal-premium').classList.remove('hidden');
         window.toggleAdminPanel = () => document.getElementById('modal-admin').classList.toggle('hidden');
         window.closeModals = () => {
             document.getElementById('modal-premium').classList.add('hidden');
             document.getElementById('modal-admin').classList.add('hidden');
         };
+        window.handleSignOut = () => { signOut(auth); location.reload(); };
     </script>
 </body>
 </html>
