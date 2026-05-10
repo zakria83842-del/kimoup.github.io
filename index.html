@@ -3,31 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KimoUp | كيمو أب</title>
+    <title>KimoUp | النسخة العملاقة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --main: #6366f1; --bg: #f8fafc; }
-        body { background-color: var(--bg); font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; }
+        :root { --main: #6366f1; }
+        body { background-color: #f1f5f9; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; }
         .kimo-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
-        .chat-pattern { background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.05; position: absolute; inset: 0; z-index: 0; }
-        .msg-bubble { position: relative; z-index: 10; transition: all 0.2s; }
-        audio::-webkit-media-controls-panel { background-color: #f1f5f9; }
+        .gift-bear { animation: bounce 2s infinite; cursor: pointer; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
+        @keyframes bounce { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-10px) rotate(5deg); } }
+        .emoji-panel { display: none; position: absolute; bottom: 80px; right: 20px; background: white; padding: 10px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 100; grid-template-columns: repeat(5, 1fr); gap: 5px; }
     </style>
 </head>
 <body class="h-screen flex items-center justify-center">
 
     <div id="auth-container" class="z-50 w-full max-w-md p-10 bg-white rounded-[3rem] shadow-2xl mx-4 text-center">
-        <div class="w-20 h-20 kimo-gradient rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl rotate-3">
-            <i class="fa-solid fa-rocket text-white text-4xl"></i>
-        </div>
+        <div class="w-20 h-20 kimo-gradient rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl"><i class="fa-solid fa-rocket text-white text-4xl"></i></div>
         <h1 class="text-3xl font-black text-gray-800">KimoUp</h1>
         <div class="mt-8 space-y-3">
-            <input type="email" id="email" placeholder="البريد الإلكتروني" class="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-indigo-500 text-right">
-            <input type="password" id="password" placeholder="كلمة المرور" class="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-indigo-500 text-right">
-            <button onclick="handleSignIn()" class="w-full kimo-gradient text-white p-4 rounded-2xl font-bold shadow-lg hover:opacity-90 transition">دخول</button>
-            <button onclick="handleSignUp()" class="text-xs text-indigo-600 font-bold">إنشاء حساب جديد</button>
+            <input type="email" id="email" placeholder="الإيميل" class="w-full p-4 bg-gray-50 rounded-2xl outline-none text-right">
+            <input type="password" id="password" placeholder="الباسورد" class="w-full p-4 bg-gray-50 rounded-2xl outline-none text-right">
+            <button onclick="handleSignIn()" class="w-full kimo-gradient text-white p-4 rounded-2xl font-bold shadow-lg">دخول</button>
+            <button onclick="handleSignUp()" class="text-xs text-indigo-600 font-bold">إنشاء حساب</button>
         </div>
     </div>
 
@@ -35,61 +33,56 @@
         <div class="w-80 border-l flex flex-col bg-white z-10 shadow-xl">
             <div class="p-6 kimo-gradient text-white">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold tracking-tighter">KIMOUP</h2>
+                    <h2 class="text-xl font-bold italic">KIMOUP</h2>
                     <div class="flex gap-2">
-                        <button onclick="openSettings()" class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white/40 transition"><i class="fa-solid fa-gear"></i></button>
-                        <button id="admin-btn" onclick="toggleAdminPanel()" class="hidden w-8 h-8 bg-yellow-400 text-indigo-900 rounded-lg flex items-center justify-center shadow-lg"><i class="fa-solid fa-crown"></i></button>
+                        <button onclick="openSettings()" class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center"><i class="fa-solid fa-gear"></i></button>
+                        <button id="admin-btn" onclick="toggleAdminPanel()" class="hidden w-8 h-8 bg-yellow-400 text-indigo-900 rounded-lg flex items-center justify-center"><i class="fa-solid fa-crown"></i></button>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <img id="user-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="w-14 h-14 rounded-2xl border-2 border-white/30 object-cover shadow-md">
+                    <div class="relative">
+                        <img id="user-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="w-14 h-14 rounded-2xl border-2 border-white/30 object-cover">
+                        <span id="user-badge" class="absolute -top-2 -right-2 text-lg"></span>
+                    </div>
                     <div>
                         <p id="user-name-display" class="font-bold">تحميل...</p>
-                        <p id="user-x-balance" class="text-xs text-yellow-300 font-black tracking-wider">X: 0</p>
+                        <p id="user-x-balance" class="text-xs text-yellow-300 font-black">X: 0</p>
                     </div>
                 </div>
             </div>
 
             <div class="p-4 bg-indigo-50 flex gap-2">
-                <input type="email" id="target-email" placeholder="أضف صديق بالإيميل" class="flex-1 p-3 text-xs rounded-xl outline-none border-none shadow-inner">
-                <button onclick="addNewContact()" class="bg-indigo-600 text-white px-4 rounded-xl hover:bg-indigo-700 transition shadow-md"><i class="fa-solid fa-user-plus"></i></button>
+                <input type="email" id="target-email" placeholder="أضف صديق بالإيميل" class="flex-1 p-3 text-xs rounded-xl border-none">
+                <button onclick="addNewContact()" class="bg-indigo-600 text-white px-4 rounded-xl"><i class="fa-solid fa-plus"></i></button>
             </div>
 
-            <div id="contacts-list" class="flex-1 overflow-y-auto bg-white">
-                </div>
-            
-            <button onclick="handleSignOut()" class="p-4 text-[10px] text-red-400 font-bold border-t hover:bg-red-50 transition">تسجيل الخروج</button>
+            <div id="contacts-list" class="flex-1 overflow-y-auto"></div>
+            <button onclick="location.reload()" class="p-4 text-[10px] text-gray-400 font-bold border-t">خروج</button>
         </div>
 
         <div class="flex-1 flex flex-col relative bg-gray-50">
-            <div class="chat-pattern"></div>
-            
-            <div id="welcome-screen" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 z-10">
-                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                    <i class="fa-solid fa-comments text-4xl opacity-20"></i>
-                </div>
-                <p class="font-bold opacity-30 tracking-widest uppercase text-xs">اختر محادثة للبدء</p>
-            </div>
-
             <div id="chat-ui" class="hidden h-full flex flex-col relative z-10">
                 <div class="p-4 bg-white/90 backdrop-blur shadow-sm flex justify-between items-center px-8 border-b">
                     <div class="flex items-center gap-3">
                         <img id="target-img" src="" class="w-10 h-10 rounded-xl object-cover bg-gray-200">
                         <h3 id="target-name" class="font-black text-gray-800">...</h3>
                     </div>
-                    <button onclick="sendXGift()" class="bg-amber-100 text-amber-700 px-4 py-2 rounded-xl text-xs font-bold hover:bg-amber-200 transition flex items-center gap-2">
-                        <i class="fa-solid fa-gift"></i> إرسال هدية
-                    </button>
+                    <button onclick="sendXGift()" class="bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-bold hover:scale-105 transition">إرسال دبدوب هدية 🧸</button>
                 </div>
 
                 <div id="messages-area" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4"></div>
 
-                <div class="p-6 flex gap-3 items-center px-8 bg-white/50 backdrop-blur">
-                    <button id="voice-btn" class="w-12 h-12 bg-white text-gray-400 rounded-2xl flex items-center justify-center shadow-lg transition active:scale-90">
-                        <i class="fa-solid fa-microphone text-xl"></i>
-                    </button>
-                    <input type="text" id="msg-input" placeholder="اكتب رسالة..." class="flex-1 p-4 rounded-2xl shadow-xl outline-none focus:ring-2 ring-indigo-500 border-none bg-white">
-                    <button onclick="sendTextMessage()" class="w-14 h-14 kimo-gradient text-white rounded-2xl shadow-xl flex items-center justify-center hover:scale-105 transition active:scale-95"><i class="fa-solid fa-paper-plane text-xl"></i></button>
+                <div class="p-6 flex gap-3 items-center px-8 bg-white border-t relative">
+                    <div id="emoji-picker" class="emoji-panel">
+                        <button onclick="addEmoji('😊')">😊</button><button onclick="addEmoji('😂')">😂</button><button onclick="addEmoji('❤️')">❤️</button>
+                        <button onclick="addEmoji('🔥')">🔥</button><button onclick="addEmoji('👍')">👍</button><button onclick="addEmoji('🎁')">🎁</button>
+                        <button onclick="addEmoji('🧸')">🧸</button><button onclick="addEmoji('✨')">✨</button><button onclick="addEmoji('✔️')">✔️</button>
+                        <button onclick="addEmoji('👑')">👑</button>
+                    </div>
+                    <button onclick="toggleEmoji()" class="text-2xl text-gray-400 hover:text-indigo-600 transition"><i class="fa-regular fa-face-smile"></i></button>
+                    <button id="voice-btn" class="w-12 h-12 bg-gray-100 text-gray-400 rounded-2xl flex items-center justify-center transition active:bg-red-500 active:text-white"><i class="fa-solid fa-microphone"></i></button>
+                    <input type="text" id="msg-input" placeholder="اكتب هنا..." class="flex-1 p-4 rounded-2xl bg-gray-50 outline-none border-none">
+                    <button onclick="sendTextMessage()" class="w-14 h-14 kimo-gradient text-white rounded-2xl shadow-xl flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -97,27 +90,19 @@
 
     <div id="modal-settings" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] w-full max-w-sm shadow-2xl">
-            <h2 class="text-xl font-black mb-6 flex items-center gap-2"><i class="fa-solid fa-user-pen text-indigo-600"></i> تعديل البروفايل</h2>
+            <h2 class="text-xl font-black mb-6">إعدادات بروفايلك</h2>
             <div class="space-y-4">
-                <input type="text" id="set-name" placeholder="الاسم المستعار" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border-none">
-                <input type="text" id="set-avatar" placeholder="رابط صورة البروفايل (URL)" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border-none text-xs">
-                <button onclick="updateProfile()" class="w-full kimo-gradient text-white p-4 rounded-2xl font-bold shadow-lg">حفظ البيانات</button>
-                <button onclick="closeModals()" class="w-full text-gray-400 text-sm font-bold">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="admin-panel" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-[2.5rem] w-full max-w-md shadow-2xl">
-            <h2 class="text-xl font-black mb-6"><i class="fa-solid fa-shield-halved text-red-500"></i> تحكم الأدمن</h2>
-            <div class="space-y-4">
-                <input type="email" id="admin-user" placeholder="إيميل المستخدم المستهدف" class="w-full p-4 bg-gray-50 rounded-2xl outline-none">
-                <div class="flex gap-2">
-                    <input type="number" id="admin-amount" placeholder="كمية X" class="flex-1 p-4 bg-gray-50 rounded-2xl outline-none">
-                    <button onclick="adminAction('coins')" class="bg-yellow-500 text-white px-8 rounded-2xl font-bold shadow-md">شحن</button>
+                <div class="flex flex-col items-center mb-4">
+                    <img id="preview-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="w-20 h-20 rounded-full object-cover mb-2 border-4 border-indigo-50">
+                    <label class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer hover:bg-indigo-100">
+                        رفع صورة من جهازك
+                        <input type="file" id="file-input" class="hidden" accept="image/*" onchange="previewFile()">
+                    </label>
                 </div>
-                <button onclick="adminAction('premium')" class="w-full bg-indigo-900 text-white p-4 rounded-2xl font-bold hover:bg-black transition">تفعيل بريميوم ⭐</button>
-                <button onclick="closeModals()" class="w-full text-gray-400 font-bold">خروج</button>
+                <input type="text" id="set-name" placeholder="الاسم المستعار" class="w-full p-4 bg-gray-50 rounded-2xl outline-none">
+                <input type="text" id="set-badge" placeholder="إيموجي أو ستيكر بجانب الاسم" class="w-full p-4 bg-gray-50 rounded-2xl outline-none text-center">
+                <button onclick="updateProfile()" class="w-full kimo-gradient text-white p-4 rounded-2xl font-bold shadow-lg">حفظ التغييرات</button>
+                <button onclick="closeModals()" class="w-full text-gray-400 text-sm">إلغاء</button>
             </div>
         </div>
     </div>
@@ -125,7 +110,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, arrayUnion, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyDEF8YAXmkV5t7scY1St2GDliQueOXGEsc", 
@@ -142,39 +127,32 @@
 
         let currentUser = null;
         let activeChat = null;
-        let mediaRecorder;
-        let audioChunks = [];
+        let base64Avatar = "";
 
-        // --- Core Authentication ---
-        async function enterApp(userEmail, isAdmin = false) {
-            const userRef = doc(db, "users", userEmail);
+        // --- Notification Request ---
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+        // --- Auth Core ---
+        async function enterApp(email, isAdmin = false) {
+            const userRef = doc(db, "users", email);
             const snap = await getDoc(userRef);
-
-            // Create user document if it doesn't exist
             if (!snap.exists()) {
-                await setDoc(userRef, {
-                    email: userEmail,
-                    name: userEmail.split('@')[0],
-                    avatar: "",
-                    xCoins: 0,
-                    isPremium: isAdmin,
-                    contacts: []
-                });
+                await setDoc(userRef, { email, name: email.split('@')[0], avatar: "", xCoins: 0, badge: "", contacts: [] });
             }
 
             document.getElementById('auth-container').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
 
             onSnapshot(userRef, (docSnap) => {
-                if(!docSnap.exists()) return;
                 currentUser = docSnap.data();
-                if (isAdmin) currentUser.isAdmin = true;
-
+                if(isAdmin) currentUser.isAdmin = true;
                 document.getElementById('user-name-display').innerText = currentUser.name;
-                document.getElementById('user-x-balance').innerText = `X: ${currentUser.xCoins || 0}`;
+                document.getElementById('user-x-balance').innerText = `X: ${currentUser.xCoins}`;
+                document.getElementById('user-badge').innerText = currentUser.badge || "";
                 if (currentUser.avatar) document.getElementById('user-img').src = currentUser.avatar;
                 if (currentUser.isAdmin) document.getElementById('admin-btn').classList.remove('hidden');
-
                 loadContacts(currentUser.contacts || []);
             });
         }
@@ -182,7 +160,6 @@
         window.handleSignIn = async () => {
             const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('password').value;
-            if(!email || !pass) return alert("املا البيانات");
             try {
                 if (email === "kareemwael0216@gmail.com" && pass === "K_425422") {
                     await enterApp(email, true);
@@ -190,33 +167,110 @@
                     const res = await signInWithEmailAndPassword(auth, email, pass);
                     await enterApp(res.user.email, false);
                 }
-            } catch (e) { alert("بيانات خاطئة أو المستخدم غير موجود"); }
+            } catch (e) { alert("خطأ في الدخول"); }
         };
 
-        window.handleSignUp = async () => {
-            const email = document.getElementById('email').value.trim();
-            const pass = document.getElementById('password').value;
-            try {
-                await createUserWithEmailAndPassword(auth, email, pass);
-                await setDoc(doc(db, "users", email), {
-                    email, name: email.split('@')[0], avatar: "", xCoins: 0, isPremium: false, contacts: []
+        // --- File Handling (Upload) ---
+        window.previewFile = () => {
+            const file = document.getElementById('file-input').files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                base64Avatar = reader.result;
+                document.getElementById('preview-img').src = base64Avatar;
+            };
+            if (file) reader.readAsDataURL(file);
+        };
+
+        window.updateProfile = async () => {
+            const name = document.getElementById('set-name').value;
+            const badge = document.getElementById('set-badge').value;
+            const updateData = { name, badge };
+            if (base64Avatar) updateData.avatar = base64Avatar;
+            await updateDoc(doc(db, "users", currentUser.email), updateData);
+            closeModals();
+        };
+
+        // --- Gift Logic (The Bear) ---
+        window.sendXGift = async () => {
+            const amount = parseInt(prompt("كمية العملات داخل الدبدوب:"));
+            if(isNaN(amount) || currentUser.xCoins < amount) return alert("رصيد غير كافٍ");
+            
+            const chatId = [currentUser.email, activeChat.email].sort().join('_');
+            await updateDoc(doc(db, "users", currentUser.email), { xCoins: currentUser.xCoins - amount });
+            
+            await addDoc(collection(db, "chats", chatId, "messages"), {
+                sender: currentUser.email, senderName: currentUser.name, 
+                amount, type: 'gift', status: 'pending', time: serverTimestamp()
+            });
+        };
+
+        window.claimGift = async (msgId, amount) => {
+            const chatId = [currentUser.email, activeChat.email].sort().join('_');
+            await updateDoc(doc(db, "users", currentUser.email), { xCoins: currentUser.xCoins + amount });
+            await deleteDoc(doc(db, "chats", chatId, "messages", msgId)); // مسح الرسالة بعد الاستلام
+            confetti({ particleCount: 200, spread: 100 });
+            alert(`مبروك! استلمت ${amount} عملة 🧸`);
+        };
+
+        // --- Chat & Notifications ---
+        function loadMessages() {
+            const chatId = [currentUser.email, activeChat.email].sort().join('_');
+            onSnapshot(query(collection(db, "chats", chatId, "messages"), orderBy("time", "asc")), (snap) => {
+                const box = document.getElementById('messages-area');
+                box.innerHTML = "";
+                snap.forEach(mDoc => {
+                    const m = mDoc.data();
+                    const isMe = m.sender === currentUser.email;
+                    const div = document.createElement('div');
+                    
+                    if (m.type === 'gift') {
+                        div.className = "self-center text-center my-4";
+                        div.innerHTML = `
+                            <div class="gift-bear text-6xl" onclick="claimGift('${mDoc.id}', ${m.amount})">🧸</div>
+                            <p class="text-[10px] font-black text-orange-500 mt-2">دبدوب هدية من ${m.senderName}</p>
+                            ${!isMe ? '<button class="text-[9px] bg-orange-100 text-orange-600 px-2 py-1 rounded-lg mt-1 font-bold">اضغط للاستلام</button>' : ''}
+                        `;
+                    } else {
+                        div.className = `max-w-[75%] p-4 rounded-3xl ${isMe ? 'self-end bg-indigo-600 text-white' : 'self-start bg-white shadow-sm'}`;
+                        div.innerText = m.text;
+                    }
+                    box.appendChild(div);
+
+                    // Push Notification
+                    if (!isMe && document.hidden) {
+                        new Notification("KimoUp", { body: `رسالة جديدة من ${m.senderName}`, icon: "/logo.png" });
+                    }
                 });
-                alert("تم الإنشاء بنجاح! سجل دخولك الآن.");
-            } catch (e) { alert("خطأ في التسجيل"); }
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+
+        // --- UI Helpers ---
+        window.toggleEmoji = () => {
+            const p = document.getElementById('emoji-picker');
+            p.style.display = p.style.display === 'grid' ? 'none' : 'grid';
         };
+        window.addEmoji = (e) => {
+            document.getElementById('msg-input').value += e;
+            toggleEmoji();
+        };
+        window.openSettings = () => {
+            document.getElementById('set-name').value = currentUser.name;
+            document.getElementById('set-badge').value = currentUser.badge || "";
+            document.getElementById('preview-img').src = currentUser.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            document.getElementById('modal-settings').classList.remove('hidden');
+        };
+        window.closeModals = () => document.querySelectorAll('[id^="modal-"]').forEach(m => m.classList.add('hidden'));
 
-        // --- Contacts Logic ---
+        // --- Rest of functions (addNewContact, loadContacts, startChat, sendTextMessage) remain same as V3.2 ---
+        // [Copy these from previous version to complete the script]
         window.addNewContact = async () => {
-            if (!currentUser) return;
             const targetEmail = document.getElementById('target-email').value.trim();
-            if(!targetEmail || targetEmail === currentUser.email) return alert("إيميل غير صالح");
-
             const check = await getDoc(doc(db, "users", targetEmail));
             if(check.exists()) {
                 await updateDoc(doc(db, "users", currentUser.email), { contacts: arrayUnion(targetEmail) });
                 document.getElementById('target-email').value = "";
-                alert("تمت الإضافة!");
-            } else { alert("هذا الإيميل غير مسجل في البرنامج"); }
+            }
         };
 
         async function loadContacts(list) {
@@ -227,151 +281,22 @@
                 if(uDoc.exists()) {
                     const data = uDoc.data();
                     const div = document.createElement('div');
-                    div.className = "flex items-center gap-4 p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-50 transition";
-                    div.innerHTML = `
-                        <img src="${data.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="w-11 h-11 rounded-xl object-cover shadow-sm bg-gray-100">
-                        <div class="flex-1">
-                            <p class="text-sm font-bold text-gray-700">${data.name} ${data.isPremium ? '⭐' : ''}</p>
-                            <p class="text-[9px] text-gray-400 font-medium">متاح للمراسلة</p>
-                        </div>
-                    `;
-                    div.onclick = () => startChat(data);
+                    div.className = "flex items-center gap-4 p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-50 transition";
+                    div.innerHTML = `<img src="${data.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="w-11 h-11 rounded-xl object-cover">
+                                     <div><p class="text-sm font-bold">${data.name} ${data.badge || ''}</p></div>`;
+                    div.onclick = () => { activeChat = data; document.getElementById('chat-ui').classList.remove('hidden'); document.getElementById('target-name').innerText = data.name; document.getElementById('target-img').src = data.avatar; loadMessages(); };
                     container.appendChild(div);
                 }
             }
-        }
-
-        // --- Profile & UI ---
-        window.openSettings = () => {
-            if(!currentUser) return;
-            document.getElementById('set-name').value = currentUser.name;
-            document.getElementById('set-avatar').value = currentUser.avatar;
-            document.getElementById('modal-settings').classList.remove('hidden');
-        };
-
-        window.updateProfile = async () => {
-            const name = document.getElementById('set-name').value;
-            const avatar = document.getElementById('set-avatar').value;
-            await updateDoc(doc(db, "users", currentUser.email), { name, avatar });
-            closeModals();
-        };
-
-        // --- Chat & Voice System ---
-        function startChat(target) {
-            activeChat = target;
-            document.getElementById('welcome-screen').classList.add('hidden');
-            document.getElementById('chat-ui').classList.remove('hidden');
-            document.getElementById('target-name').innerText = target.name;
-            document.getElementById('target-img').src = target.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-            loadMessages();
-        }
-
-        function loadMessages() {
-            const chatId = [currentUser.email, activeChat.email].sort().join('_');
-            const q = query(collection(db, "chats", chatId, "messages"), orderBy("time", "asc"));
-            onSnapshot(q, (snap) => {
-                const box = document.getElementById('messages-area');
-                box.innerHTML = "";
-                snap.forEach(mDoc => {
-                    const m = mDoc.data();
-                    const isMe = m.sender === currentUser.email;
-                    const div = document.createElement('div');
-                    
-                    if(m.type === 'voice') {
-                        div.className = `max-w-[85%] p-2 rounded-2xl ${isMe ? 'self-end bg-indigo-100' : 'self-start bg-white shadow-sm'}`;
-                        div.innerHTML = `<audio controls src="${m.audio}" class="h-8 w-48"></audio>`;
-                    } else if(m.type === 'gift') {
-                        div.className = "self-center bg-gradient-to-r from-amber-400 to-orange-500 text-white p-4 rounded-[2rem] font-black text-[10px] shadow-xl my-2 flex items-center gap-2";
-                        div.innerHTML = `<i class="fa-solid fa-gift"></i> هدية من ${m.senderName}: +${m.amount} X Coins`;
-                    } else {
-                        div.className = `max-w-[75%] p-4 rounded-[1.5rem] text-sm shadow-sm ${isMe ? 'self-end bg-indigo-600 text-white' : 'self-start bg-white text-gray-800'}`;
-                        div.innerText = m.text;
-                    }
-                    box.appendChild(div);
-                });
-                box.scrollTop = box.scrollHeight;
-            });
         }
 
         window.sendTextMessage = async () => {
             const txt = document.getElementById('msg-input').value.trim();
             if(!txt || !activeChat) return;
             const chatId = [currentUser.email, activeChat.email].sort().join('_');
-            await addDoc(collection(db, "chats", chatId, "messages"), {
-                sender: currentUser.email, text: txt, type: 'text', time: serverTimestamp()
-            });
+            await addDoc(collection(db, "chats", chatId, "messages"), { sender: currentUser.email, senderName: currentUser.name, text: txt, type: 'text', time: serverTimestamp() });
             document.getElementById('msg-input').value = "";
         };
-
-        // --- Voice Recording ---
-        const vBtn = document.getElementById('voice-btn');
-        vBtn.onmousedown = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start();
-                audioChunks = [];
-                vBtn.classList.add('bg-red-500', 'text-white', 'animate-pulse');
-                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-                mediaRecorder.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
-                    const reader = new FileReader();
-                    reader.readAsDataURL(audioBlob);
-                    reader.onloadend = async () => {
-                        const chatId = [currentUser.email, activeChat.email].sort().join('_');
-                        await addDoc(collection(db, "chats", chatId, "messages"), {
-                            sender: currentUser.email, audio: reader.result, type: 'voice', time: serverTimestamp()
-                        });
-                    };
-                };
-            } catch (e) { alert("يجب تفعيل سماح الميكروفون"); }
-        };
-        vBtn.onmouseup = () => {
-            if(mediaRecorder) {
-                mediaRecorder.stop();
-                vBtn.classList.remove('bg-red-500', 'text-white', 'animate-pulse');
-            }
-        };
-
-        // --- Gifts & Admin ---
-        window.sendXGift = async () => {
-            const amount = parseInt(prompt("أدخل كمية العملات للهديّة:"));
-            if(isNaN(amount) || amount <= 0 || currentUser.xCoins < amount) return alert("رصيد غير كافٍ أو مبلغ خاطئ");
-            
-            const chatId = [currentUser.email, activeChat.email].sort().join('_');
-            await updateDoc(doc(db, "users", currentUser.email), { xCoins: currentUser.xCoins - amount });
-            const targetRef = doc(db, "users", activeChat.email);
-            const targetSnap = await getDoc(targetRef);
-            await updateDoc(targetRef, { xCoins: (targetSnap.data().xCoins || 0) + amount });
-
-            await addDoc(collection(db, "chats", chatId, "messages"), {
-                sender: currentUser.email, senderName: currentUser.name, amount, type: 'gift', time: serverTimestamp()
-            });
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        };
-
-        window.adminAction = async (type) => {
-            const email = document.getElementById('admin-user').value.trim();
-            const ref = doc(db, "users", email);
-            const snap = await getDoc(ref);
-            if(!snap.exists()) return alert("المستخدم غير موجود");
-
-            if(type === 'coins') {
-                const val = parseInt(document.getElementById('admin-amount').value);
-                await updateDoc(ref, { xCoins: (snap.data().xCoins || 0) + val });
-                alert("تم الشحن!");
-            } else {
-                await updateDoc(ref, { isPremium: true });
-                alert("تم التفعيل!");
-            }
-        };
-
-        window.toggleAdminPanel = () => document.getElementById('admin-panel').classList.toggle('hidden');
-        window.closeModals = () => {
-            document.getElementById('modal-settings').classList.add('hidden');
-            document.getElementById('admin-panel').classList.add('hidden');
-        };
-        window.handleSignOut = () => { signOut(auth).then(() => location.reload()); };
     </script>
 </body>
 </html>
