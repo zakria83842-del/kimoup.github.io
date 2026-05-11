@@ -2,108 +2,93 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KimoUp | النسخة الماستر V5</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>KimoUp</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiS2ltb1VwIiwic2hvcnRfbmFtZSI6IktpbW9VcCIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjNGY0NmU1IiwidGhlbWVfY29sb3IiOiIjNGY0NmU1IiwiaWNvbnMiOlt7InNyYyI6Imh0dHBzOi8vY2RuLWljb25zLXBuZy5mbGF0aWNvbi5jb20vNTEyLzE0OS8xNDkwNzEucG5nIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9XX0=">
     <style>
         :root { --main: #4f46e5; --bg: #f8fafc; }
-        body { background-color: var(--bg); font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; }
-        
-        ::-webkit-scrollbar { width: 6px; }
+        body { background-color: var(--bg); font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; -webkit-text-size-adjust: 100%; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
         .kimo-gradient { background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%); }
         .chat-pattern { background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.04; position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-        
-        /* الحزم الأساسية - بدون word-break خالص */
         .msg-bubble { position: relative; z-index: 10; transition: all 0.2s; }
         .msg-bubble img { max-width: 250px; border-radius: 10px; margin-top: 5px; cursor: pointer; }
-        
         .gift-bear { font-size: 4rem; animation: float 3s ease-in-out infinite; cursor: pointer; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15)); transition: transform 0.2s; }
         .gift-bear:hover { transform: scale(1.1); }
         .gift-claimed { font-size: 3rem; filter: grayscale(100%); opacity: 0.5; cursor: not-allowed; }
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
-        
         .online-dot { width: 12px; height: 12px; background-color: #22c55e; border-radius: 50%; border: 2px solid white; position: absolute; bottom: 0; right: 0; box-shadow: 0 0 5px rgba(34, 197, 94, 0.5); }
-        
         .tab-btn { flex: 1; padding: 12px; text-align: center; font-weight: bold; color: #64748b; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.3s; }
         .tab-btn.active { color: #4f46e5; border-bottom: 2px solid #4f46e5; background: #e0e7ff; }
-        
         .emoji-panel { display: none; position: absolute; bottom: 90px; right: 20px; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 100; grid-template-columns: repeat(6, 1fr); gap: 10px; border: 1px solid #f1f5f9; }
         .emoji-panel button { font-size: 1.5rem; transition: transform 0.1s; }
         .emoji-panel button:hover { transform: scale(1.2); }
-
-        .ai-bot-card {
-            background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 50%, #fdf2f8 100%);
-            border: 1px solid #c7d2fe; border-radius: 16px; margin: 8px; padding: 12px;
-            cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
-        }
-        .ai-bot-card::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
-            animation: aiPulse 4s ease-in-out infinite;
-        }
+        .ai-bot-card { background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 50%, #fdf2f8 100%); border: 1px solid #c7d2fe; border-radius: 16px; margin: 8px; padding: 12px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+        .ai-bot-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%); animation: aiPulse 4s ease-in-out infinite; }
         .ai-bot-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(99,102,241,0.15); border-color: #a5b4fc; }
         @keyframes aiPulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } }
-
         .typing-dots { display: inline-flex; gap: 5px; align-items: center; padding: 4px 0; }
         .typing-dots span { width: 8px; height: 8px; background: #818cf8; border-radius: 50%; animation: typingBounce 1.4s infinite ease-in-out; }
         .typing-dots span:nth-child(1) { animation-delay: 0s; }
         .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
         .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-10px); opacity: 1; } }
-
         .ai-counter-bar { background: linear-gradient(90deg, #eef2ff, #faf5ff); border-bottom: 1px solid #e0e7ff; padding: 8px 16px; text-align: center; }
         .premium-glow { animation: premiumPulse 2s ease-in-out infinite; }
         @keyframes premiumPulse { 0%, 100% { filter: drop-shadow(0 0 3px rgba(245,158,11,0.3)); } 50% { filter: drop-shadow(0 0 8px rgba(245,158,11,0.6)); } }
         .bot-avatar-ring { background: conic-gradient(from 0deg, #6366f1, #a855f7, #ec4899, #6366f1); padding: 2px; border-radius: 14px; animation: ringRotate 3s linear infinite; }
         @keyframes ringRotate { to { filter: hue-rotate(360deg); } }
 
-        /* ===== أهم جزء - تنسيق النص العربي مصحح ===== */
-        .bot-msg-text {
+        /* === الحل الجذري لمشكلة الحروف العربية === */
+        .bot-msg-text, .user-msg-text {
             direction: rtl;
             text-align: right;
             font-size: 14px;
             line-height: 2;
             white-space: normal;
-            overflow-wrap: break-word;
-            word-wrap: break-word;
+            word-break: normal !important;
+            overflow-wrap: break-word !important;
+            word-wrap: break-word !important;
+            hyphens: manual !important;
+            -webkit-hyphens: manual !important;
+            -ms-hyphens: manual !important;
         }
         .bot-msg-text strong { color: #4338ca; font-weight: 800; }
-        .bot-msg-text em { color: #7c3aed; }
-        .bot-msg-text code {
-            background: #e0e7ff; color: #4338ca;
-            padding: 2px 6px; border-radius: 6px;
-            font-size: 0.8em; font-family: 'Courier New', monospace;
-            direction: ltr; display: inline-block;
-        }
-        .bot-msg-text pre {
-            background: #1e1b4b; color: #c7d2fe;
-            padding: 12px; border-radius: 10px;
-            overflow-x: auto; direction: ltr; text-align: left;
-            margin: 8px 0; font-family: 'Courier New', monospace; font-size: 0.8em;
-            white-space: pre;
-        }
+        .bot-msg-text code { background: #e0e7ff; color: #4338ca; padding: 2px 6px; border-radius: 6px; font-size: 0.8em; font-family: 'Courier New', monospace; direction: ltr; display: inline-block; }
+        .bot-msg-text pre { background: #1e1b4b; color: #c7d2fe; padding: 12px; border-radius: 10px; overflow-x: auto; direction: ltr; text-align: left; margin: 8px 0; font-family: 'Courier New', monospace; font-size: 0.8em; white-space: pre; }
 
-        /* رسائل المستخدم */
-        .user-msg-text {
-            direction: rtl;
-            text-align: right;
-            font-size: 14px;
-            line-height: 1.8;
-            white-space: normal;
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-        }
+        /* كارت الدعوة */
+        .invite-card { background: linear-gradient(135deg, #4f46e5, #9333ea); border-radius: 20px; padding: 24px; text-align: center; color: white; position: relative; overflow: hidden; }
+        .invite-card::before { content: ''; position: absolute; top: -30px; right: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; }
+        .invite-card::after { content: ''; position: absolute; bottom: -20px; left: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.08); border-radius: 50%; }
     </style>
 </head>
 <body class="h-screen flex items-center justify-center text-gray-800 relative">
-
     <div id="toast-container" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[999] flex flex-col gap-2"></div>
+
+    <!-- شاشة الدعوة -->
+    <div id="invite-screen" class="hidden fixed inset-0 bg-slate-900/60 z-[300] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl text-center">
+            <div class="invite-card mb-6">
+                <i class="fa-solid fa-users text-4xl mb-3 relative z-10"></i>
+                <h2 id="invite-group-name" class="text-2xl font-black mb-2 relative z-10">اسم الجروب</h2>
+                <p id="invite-group-type" class="text-sm opacity-80 relative z-10">جروب عام</p>
+            </div>
+            <p class="text-gray-600 font-bold mb-6">تمت دعوتك للانضمام!</p>
+            <div class="flex gap-3">
+                <button onclick="acceptInvite()" class="flex-1 kimo-gradient text-white p-4 rounded-2xl font-bold shadow-lg">انضمام</button>
+                <button onclick="declineInvite()" class="flex-1 p-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200">إلغاء</button>
+            </div>
+        </div>
+    </div>
 
     <div id="auth-container" class="z-50 w-full max-w-md p-10 bg-white rounded-[2.5rem] shadow-2xl mx-4 text-center border border-gray-100 relative overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-2 kimo-gradient"></div>
@@ -119,7 +104,8 @@
     </div>
 
     <div id="app-container" class="hidden w-full h-screen flex bg-white overflow-hidden">
-        <div class="w-80 md:w-96 border-l flex flex-col bg-white z-20 shadow-2xl relative">
+        <!-- Sidebar -->
+        <div id="sidebar-panel" class="w-80 md:w-96 border-l flex flex-col bg-white z-20 shadow-2xl relative">
             <div class="p-6 bg-white border-b relative">
                 <div class="absolute top-0 left-0 w-full h-1 kimo-gradient"></div>
                 <div class="flex justify-between items-center mb-6">
@@ -130,16 +116,17 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="relative cursor-pointer" onclick="openSettings()">
+                    <div class="relative cursor-pointer" onclick="openMyProfile()">
                         <img id="user-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="w-16 h-16 rounded-2xl object-cover shadow-md border border-gray-100">
                         <span id="user-badge" class="absolute -top-2 -right-2 text-xl filter drop-shadow-md"></span>
                         <div class="online-dot"></div>
                     </div>
                     <div>
                         <p id="user-name-display" class="font-black text-lg text-gray-800">تحميل...</p>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <div class="bg-amber-50 px-3 py-1 rounded-lg inline-block border border-amber-100"><p id="user-x-balance" class="text-xs text-amber-600 font-black tracking-wider"><i class="fa-solid fa-coins mr-1"></i> X: 0</p></div>
-                            <div id="premium-badge-display" class="hidden bg-gradient-to-r from-amber-400 to-orange-400 px-3 py-1 rounded-lg inline-block"><p class="text-xs text-white font-black tracking-wider premium-glow"><i class="fa-solid fa-crown mr-1"></i>بريميوم</p></div>
+                        <p id="user-bio-display" class="text-[10px] text-gray-400 mt-0.5 max-w-[180px] truncate"></p>
+                        <div class="flex items-center gap-2 flex-wrap mt-1">
+                            <div class="bg-amber-50 px-3 py-0.5 rounded-lg inline-block border border-amber-100"><p id="user-x-balance" class="text-xs text-amber-600 font-black tracking-wider"><i class="fa-solid fa-coins mr-1"></i> X: 0</p></div>
+                            <div id="premium-badge-display" class="hidden bg-gradient-to-r from-amber-400 to-orange-400 px-3 py-0.5 rounded-lg inline-block"><p class="text-xs text-white font-black tracking-wider premium-glow"><i class="fa-solid fa-crown mr-1"></i>بريميوم</p></div>
                         </div>
                     </div>
                 </div>
@@ -154,6 +141,7 @@
             <button onclick="handleSignOut()" class="p-4 text-xs text-red-500 font-bold border-t bg-red-50/30 hover:bg-red-50 transition flex items-center justify-center gap-2"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
         </div>
 
+        <!-- Chat Area -->
         <div class="flex-1 flex flex-col relative bg-gray-50">
             <div class="chat-pattern"></div>
             <div id="welcome-screen" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 z-10 backdrop-blur-sm bg-white/50">
@@ -164,27 +152,24 @@
 
             <div id="chat-ui" class="hidden h-full flex flex-col relative z-10">
                 <div class="p-4 bg-white/95 backdrop-blur-md shadow-sm flex justify-between items-center px-6 border-b z-20">
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-4 cursor-pointer" onclick="openTargetProfile()">
                         <div class="relative"><img id="target-img" src="" class="w-12 h-12 rounded-2xl object-cover border border-gray-100 shadow-sm"><div id="target-online-status" class="hidden online-dot"></div></div>
                         <div><h3 id="target-name" class="font-black text-gray-800 text-lg flex items-center gap-2">...</h3><p id="target-subtitle" class="text-xs text-indigo-500 font-bold">...</p></div>
                     </div>
                     <div class="flex gap-2">
+                        <button id="group-members-btn" onclick="showGroupMembers()" class="hidden bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-100 transition shadow-sm border border-indigo-100 flex items-center gap-2"><i class="fa-solid fa-users"></i> الأعضاء</button>
+                        <button id="group-settings-btn" onclick="showGroupSettings()" class="hidden bg-gray-50 text-gray-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-gray-100 transition shadow-sm border border-gray-200 flex items-center gap-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
                         <button id="group-link-btn" onclick="copyGroupLink()" class="hidden bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-100 transition shadow-sm border border-indigo-100 flex items-center gap-2"><i class="fa-solid fa-link"></i> رابط الدعوة</button>
-                        <button id="gift-btn" onclick="sendXGift()" class="bg-amber-100 text-amber-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-amber-200 transition shadow-sm border border-amber-200 flex items-center gap-2"><i class="fa-solid fa-gift"></i> إرسال هدية</button>
+                        <button id="gift-btn" onclick="sendXGift()" class="bg-amber-100 text-amber-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-amber-200 transition shadow-sm border border-amber-200 flex items-center gap-2"><i class="fa-solid fa-gift"></i> هدية</button>
                     </div>
                 </div>
                 <div id="ai-counter-bar" class="hidden ai-counter-bar"><p id="ai-counter-text" class="text-xs font-bold text-indigo-700"></p></div>
                 <div id="messages-area" class="flex-1 p-6 overflow-y-auto flex flex-col gap-3 scroll-smooth"></div>
                 <div id="chat-input-area" class="p-4 bg-white border-t relative z-20 flex flex-col gap-2 shadow-[0_-10px_30px_rgba(0,0,0,0.02)]">
-                    <div id="emoji-picker" class="emoji-panel">
-                        <button onclick="addEmoji('😊')">😊</button><button onclick="addEmoji('😂')">😂</button><button onclick="addEmoji('❤️')">❤️</button>
-                        <button onclick="addEmoji('🔥')">🔥</button><button onclick="addEmoji('👍')">👍</button><button onclick="addEmoji('🎁')">🎁</button>
-                        <button onclick="addEmoji('🧸')">🧸</button><button onclick="addEmoji('✨')">✨</button><button onclick="addEmoji('✔️')">✔️</button>
-                        <button onclick="addEmoji('👑')">👑</button><button onclick="addEmoji('💔')">💔</button><button onclick="addEmoji('💯')">💯</button>
-                    </div>
+                    <div id="emoji-picker" class="emoji-panel"><button onclick="addEmoji('😊')">😊</button><button onclick="addEmoji('😂')">😂</button><button onclick="addEmoji('❤️')">❤️</button><button onclick="addEmoji('🔥')">🔥</button><button onclick="addEmoji('👍')">👍</button><button onclick="addEmoji('🎁')">🎁</button><button onclick="addEmoji('🧸')">🧸</button><button onclick="addEmoji('✨')">✨</button><button onclick="addEmoji('✔️')">✔️</button><button onclick="addEmoji('👑')">👑</button><button onclick="addEmoji('💔')">💔</button><button onclick="addEmoji('💯')">💯</button></div>
                     <div class="flex gap-3 items-end px-4">
                         <button onclick="toggleEmoji()" class="w-12 h-12 text-2xl text-gray-400 hover:text-indigo-500 transition"><i class="fa-regular fa-face-smile"></i></button>
-                        <label class="w-12 h-12 text-xl text-gray-400 hover:text-indigo-500 transition cursor-pointer flex items-center justify-center"><i class="fa-solid fa-paperclip"></i><input type="file" id="chat-file-input" class="hidden" accept="image/*" onchange="sendImageMsg()"></label>
+                        <label class="w-12 h-12 text-xl text-gray-400 hover:text-indigo-500 transition cursor-pointer flex items-center justify-center"><i class="fa-solid fa-image"></i><input type="file" id="chat-file-input" class="hidden" accept="image/*" onchange="sendImageMsg()"></label>
                         <div class="flex-1 relative bg-gray-50 rounded-2xl border border-gray-100 focus-within:ring-2 ring-indigo-100 transition shadow-inner"><textarea id="msg-input" placeholder="اكتب رسالتك هنا..." class="w-full p-4 bg-transparent outline-none resize-none max-h-32 text-sm leading-relaxed" rows="1"></textarea></div>
                         <button id="voice-btn" class="w-14 h-14 bg-gray-100 text-gray-500 rounded-2xl flex items-center justify-center transition active:bg-red-500 active:text-white shadow-sm hover:bg-gray-200"><i class="fa-solid fa-microphone text-xl"></i></button>
                         <button onclick="sendMessage()" id="send-btn" class="w-14 h-14 kimo-gradient text-white rounded-2xl shadow-lg flex items-center justify-center hover:-translate-y-1 transition active:translate-y-0"><i class="fa-solid fa-paper-plane text-xl transform -translate-x-1 translate-y-0.5"></i></button>
@@ -195,30 +180,76 @@
         </div>
     </div>
 
+    <!-- موديل البروفايل الشخصي -->
+    <div id="modal-profile" class="hidden fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl relative border border-white/20 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModals()" class="absolute top-4 left-4 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-200"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex flex-col items-center mb-6">
+                <img id="profile-avatar" src="" class="w-24 h-24 rounded-full object-cover mb-3 border-4 border-indigo-50 shadow-md">
+                <h2 id="profile-name" class="text-xl font-black text-gray-800"></h2>
+                <p id="profile-email" class="text-xs text-gray-400"></p>
+                <p id="profile-bio" class="text-sm text-gray-500 mt-2 text-center max-w-[280px]"></p>
+            </div>
+            <div class="grid grid-cols-3 gap-3 mb-4">
+                <div class="bg-amber-50 p-3 rounded-2xl text-center border border-amber-100"><p id="profile-coins" class="text-lg font-black text-amber-600">0</p><p class="text-[10px] text-amber-500 font-bold">عملات X</p></div>
+                <div class="bg-indigo-50 p-3 rounded-2xl text-center border border-indigo-100"><p id="profile-friends" class="text-lg font-black text-indigo-600">0</p><p class="text-[10px] text-indigo-500 font-bold">أصدقاء</p></div>
+                <div class="bg-purple-50 p-3 rounded-2xl text-center border border-purple-100"><p id="profile-groups" class="text-lg font-black text-purple-600">0</p><p class="text-[10px] text-purple-500 font-bold">مجتمعات</p></div>
+            </div>
+            <div id="profile-premium-badge" class="hidden bg-gradient-to-r from-amber-50 to-orange-50 p-3 rounded-2xl border border-amber-200 text-center mb-4"><p class="font-bold text-amber-700"><i class="fa-solid fa-crown mr-1"></i>مستخدم بريميوم</p></div>
+        </div>
+    </div>
+
+    <!-- موديل الإعدادات -->
     <div id="modal-settings" class="hidden fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl relative border border-white/20 max-h-[90vh] overflow-y-auto">
             <h2 class="text-2xl font-black mb-6 text-gray-800 flex items-center gap-3"><i class="fa-solid fa-user-pen text-indigo-500"></i> إعدادات الحساب</h2>
             <div class="space-y-4">
                 <div class="flex flex-col items-center mb-6"><div class="relative"><img id="preview-img" src="" class="w-24 h-24 rounded-full object-cover mb-3 border-4 border-indigo-50 shadow-md"><label class="absolute bottom-3 -right-2 bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-indigo-700 transition border-2 border-white"><i class="fa-solid fa-camera text-xs"></i><input type="file" id="avatar-input" class="hidden" accept="image/*" onchange="previewAvatar()"></label></div></div>
-                <div><label class="text-xs font-bold text-gray-500 ml-2 mb-1 block">الاسم المستعار</label><input type="text" id="set-name" class="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-indigo-200"></div>
+                <div><label class="text-xs font-bold text-gray-500 ml-2 mb-1 block">الاسم</label><input type="text" id="set-name" class="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-indigo-200"></div>
+                <div><label class="text-xs font-bold text-gray-500 ml-2 mb-1 block">البايو</label><textarea id="set-bio" placeholder="اكتب نبذة عنك..." class="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-indigo-200 resize-none" rows="3"></textarea></div>
                 <div><label class="text-xs font-bold text-gray-500 ml-2 mb-1 block">شارة</label><input type="text" id="set-badge" class="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-indigo-200 text-center text-xl"></div>
-                <div id="premium-section" class="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-2xl border border-amber-200"><div class="flex justify-between items-center"><div><p class="font-black text-amber-800 flex items-center gap-2"><i class="fa-solid fa-crown"></i> بريميوم</p><p id="premium-status-text" class="text-xs text-amber-600 mt-1">رسائل غير محدودة مع KimoAI</p></div><button id="premium-upgrade-btn" onclick="upgradeToPremium()" class="bg-amber-500 text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-amber-600 transition shadow-md">100 X</button></div></div>
-                <div class="pt-4 flex gap-3"><button onclick="updateProfile()" class="flex-1 kimo-gradient text-white p-4 rounded-2xl font-bold shadow-lg hover:shadow-indigo-500/30">حفظ</button><button onclick="closeModals()" class="p-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200">إلغاء</button></div>
+                <div id="premium-section" class="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-2xl border border-amber-200"><div class="flex justify-between items-center"><div><p class="font-black text-amber-800 flex items-center gap-2"><i class="fa-solid fa-crown"></i> بريميوم</p><p id="premium-status-text" class="text-xs text-amber-600 mt-1">رسائل غير محدودة</p></div><button id="premium-upgrade-btn" onclick="upgradeToPremium()" class="bg-amber-500 text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-amber-600 transition shadow-md">100 X</button></div></div>
+                <div class="pt-4 flex gap-3"><button onclick="updateProfile()" class="flex-1 kimo-gradient text-white p-4 rounded-2xl font-bold shadow-lg">حفظ</button><button onclick="closeModals()" class="p-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200">إلغاء</button></div>
             </div>
         </div>
     </div>
 
+    <!-- موديل إنشاء مجتمع -->
     <div id="modal-group" class="hidden fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl">
             <h2 class="text-2xl font-black mb-6 flex items-center gap-3"><i class="fa-solid fa-users-rectangle text-purple-500"></i> إنشاء مجتمع</h2>
             <div class="space-y-4">
                 <input type="text" id="group-name" placeholder="اسم الجروب أو القناة" class="w-full p-4 bg-gray-50 rounded-2xl outline-none">
                 <select id="group-type" class="w-full p-4 bg-gray-50 rounded-2xl outline-none font-bold text-gray-600 cursor-pointer border-none"><option value="group">جروب عام</option><option value="channel">قناة</option></select>
+                <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200"><label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="group-invite-only" class="w-5 h-5 accent-indigo-600"><div><p class="font-bold text-amber-800 text-sm">بدعوة فقط</p><p class="text-[10px] text-amber-600">الأعضاء يحتاجون رابط دعوة للانضمام</p></div></label></div>
                 <div class="pt-4 flex gap-3"><button onclick="createGroup()" class="flex-1 bg-purple-600 text-white p-4 rounded-2xl font-bold shadow-lg">إنشاء</button><button onclick="closeModals()" class="p-4 bg-gray-100 text-gray-600 rounded-2xl font-bold">إلغاء</button></div>
             </div>
         </div>
     </div>
 
+    <!-- موديل أعضاء الجروب -->
+    <div id="modal-members" class="hidden fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl max-h-[80vh] overflow-y-auto">
+            <h2 class="text-2xl font-black mb-6 flex items-center gap-3"><i class="fa-solid fa-users text-indigo-500"></i> الأعضاء</h2>
+            <div id="members-list" class="space-y-3"></div>
+            <button onclick="closeModals()" class="w-full mt-6 p-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- موديل إعدادات الجروب -->
+    <div id="modal-group-settings" class="hidden fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl max-h-[80vh] overflow-y-auto">
+            <h2 class="text-2xl font-black mb-6 flex items-center gap-3"><i class="fa-solid fa-gear text-indigo-500"></i> إعدادات المجتمع</h2>
+            <div class="space-y-4">
+                <div class="flex gap-3"><button onclick="copyGroupLink()" class="flex-1 bg-indigo-50 text-indigo-600 p-4 rounded-2xl font-bold hover:bg-indigo-100 flex items-center justify-center gap-2"><i class="fa-solid fa-link"></i> نسخ رابط الدعوة</button></div>
+                <button onclick="toggleInviteOnly()" id="toggle-invite-btn" class="w-full p-4 bg-amber-50 text-amber-700 font-bold rounded-2xl hover:bg-amber-100 flex items-center justify-center gap-2 border border-amber-200"><i class="fa-solid fa-lock"></i> <span id="invite-only-text">بدعوة فقط: إيقاف</span></button>
+                <button onclick="deleteGroup()" class="w-full p-4 bg-red-50 text-red-600 font-bold rounded-2xl hover:bg-red-100 flex items-center justify-center gap-2 border border-red-200"><i class="fa-solid fa-trash"></i> حذف المجتمع</button>
+            </div>
+            <button onclick="closeModals()" class="w-full mt-6 p-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- لوحة الأدمن -->
     <div id="admin-panel" class="hidden fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white p-8 rounded-[2rem] w-full max-w-md shadow-2xl border-2 border-amber-200 max-h-[90vh] overflow-y-auto">
             <h2 class="text-2xl font-black mb-6 text-amber-600 flex items-center gap-3"><i class="fa-solid fa-shield-halved"></i> تحكم الأدمن</h2>
@@ -235,7 +266,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, arrayUnion, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, arrayUnion, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDEF8YAXmkV5t7scY1St2GDliQueOXGEsc", authDomain: "telekimo-36af6.firebaseapp.com", projectId: "telekimo-36af6", storageBucket: "telekimo-36af6.firebasestorage.app", messagingSenderId: "430737934562", appId: "1:430737934562:web:22eb31d1fd4742826776bb" };
         const app = initializeApp(firebaseConfig);
@@ -244,17 +275,28 @@
 
         let currentUser = null, activeChat = null, chatType = 'direct', currentTab = 'chats';
         let activeSnapshotUnsubscribe = null, mediaRecorder, audioChunks = [], base64Avatar = "", isBotProcessing = false;
+        let pendingInviteCode = null;
 
         const AI_BOT_EMAIL = "kimoai@bot.kimoup", AI_BOT_NAME = "KimoAI";
         const AI_BOT_AVATAR = "https://cdn-icons-png.flaticon.com/512/8649/8649540.png";
         const GROQ_API_KEY = "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";
-
-        // ===== الموديلات الجديدة الشغالة =====
         const GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
         const GROQ_TEXT_MODEL = "llama-3.3-70b-versatile";
-
         const FREE_AI_LIMIT = 10, PREMIUM_COST = 100;
         const AI_BOT_DATA = { email: AI_BOT_EMAIL, name: AI_BOT_NAME, avatar: AI_BOT_AVATAR, badge: "\u{1F916}", isOnline: true };
+
+        // PWA Service Worker
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('data:text/javascript,self.addEventListener("fetch",function(e){e.respondWith(fetch(e.request))})').catch(() => {}); }
+
+        // إشعارات
+        async function requestNotifPermission() { if ('Notification' in window && Notification.permission !== 'granted') { try { await Notification.requestPermission(); } catch(e) {} } }
+        requestNotifPermission();
+
+        function sendNotif(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
+                try { new Notification(title, { body: body, icon: 'https://cdn-icons-png.flaticon.com/512/149/149071.png', badge: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }); } catch(e) {}
+            }
+        }
 
         window.showToast = (msg, type = 'info') => {
             const colors = { info: 'bg-indigo-600', success: 'bg-green-500', error: 'bg-red-500' };
@@ -272,12 +314,13 @@
         // =============================================
         async function setOnlineStatus(email, isOnline) { try { await updateDoc(doc(db, "users", email), { isOnline, lastSeen: serverTimestamp() }); } catch(e){} }
         window.addEventListener('beforeunload', () => { if(currentUser) setOnlineStatus(currentUser.email, false); });
+        document.addEventListener('visibilitychange', () => { if(currentUser) setOnlineStatus(currentUser.email, !document.hidden); });
 
         async function enterApp(email, isAdmin = false) {
             const userRef = doc(db, "users", email);
             const snap = await getDoc(userRef);
-            if (!snap.exists()) { await setDoc(userRef, { email, name: email.split('@')[0], avatar: "", xCoins: 0, badge: "", contacts: [], isOnline: true, isPremium: false, aiMsgCount: 0, aiMsgResetDate: "" }); }
-            else { await setOnlineStatus(email, true); const data = snap.data(), updates = {}; if (data.isPremium === undefined) updates.isPremium = false; if (data.aiMsgCount === undefined) updates.aiMsgCount = 0; if (data.aiMsgResetDate === undefined) updates.aiMsgResetDate = ""; if (Object.keys(updates).length > 0) await updateDoc(userRef, updates); }
+            if (!snap.exists()) { await setDoc(userRef, { email, name: email.split('@')[0], avatar: "", xCoins: 0, badge: "", bio: "", contacts: [], isOnline: true, isPremium: false, aiMsgCount: 0, aiMsgResetDate: "" }); }
+            else { await setOnlineStatus(email, true); const data = snap.data(), updates = {}; if (data.isPremium === undefined) updates.isPremium = false; if (data.aiMsgCount === undefined) updates.aiMsgCount = 0; if (data.aiMsgResetDate === undefined) updates.aiMsgResetDate = ""; if (data.bio === undefined) updates.bio = ""; if (Object.keys(updates).length > 0) await updateDoc(userRef, updates); }
             document.getElementById('auth-container').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
             onSnapshot(userRef, (docSnap) => {
@@ -285,6 +328,7 @@
                 currentUser = Object.assign({ email: docSnap.id }, docSnap.data());
                 if(isAdmin) currentUser.isAdmin = true;
                 document.getElementById('user-name-display').innerText = currentUser.name;
+                document.getElementById('user-bio-display').innerText = currentUser.bio || "";
                 document.getElementById('user-x-balance').innerHTML = `<i class="fa-solid fa-coins mr-1"></i> X: ${currentUser.xCoins}`;
                 document.getElementById('user-badge').innerText = currentUser.badge || "";
                 if (currentUser.avatar) document.getElementById('user-img').src = currentUser.avatar;
@@ -300,30 +344,59 @@
             try { if (email === "kareemwael0216@gmail.com" && pass === "K_425422") await enterApp(email, true); else { const res = await signInWithEmailAndPassword(auth, email, pass); await enterApp(res.user.email, false); } showToast("تم تسجيل الدخول بنجاح", "success"); }
             catch (e) { showToast("خطأ في البريد أو كلمة المرور", "error"); }
         };
-
         window.handleSignUp = async () => {
             const email = document.getElementById('email').value.trim(), pass = document.getElementById('password').value;
-            if(pass.length < 6) return showToast("كلمة المرور يجب أن تكون 6 أحرف على الأقل", "error");
-            try { await createUserWithEmailAndPassword(auth, email, pass); await setDoc(doc(db, "users", email), { email, name: email.split('@')[0], avatar: "", xCoins: 0, badge: "", contacts: [], isOnline: true, isPremium: false, aiMsgCount: 0, aiMsgResetDate: "" }); showToast("تم إنشاء الحساب!", "success"); }
+            if(pass.length < 6) return showToast("كلمة المرور 6 أحرف على الأقل", "error");
+            try { await createUserWithEmailAndPassword(auth, email, pass); await setDoc(doc(db, "users", email), { email, name: email.split('@')[0], avatar: "", xCoins: 0, badge: "", bio: "", contacts: [], isOnline: true, isPremium: false, aiMsgCount: 0, aiMsgResetDate: "" }); showToast("تم إنشاء الحساب!", "success"); }
             catch (e) { showToast("هذا البريد مستخدم مسبقاً", "error"); }
         };
-
         window.handleSignOut = async () => { if(currentUser) await setOnlineStatus(currentUser.email, false); signOut(auth).then(() => location.href = location.pathname); };
 
         // =============================================
-        // 2. العداد والبريميوم
+        // 2. العداد والبريميوم والبايو
         // =============================================
         async function getAIMsgCount() { const today = new Date().toISOString().split('T')[0]; if (currentUser.aiMsgResetDate !== today) { await updateDoc(doc(db, "users", currentUser.email), { aiMsgCount: 0, aiMsgResetDate: today }); currentUser.aiMsgCount = 0; currentUser.aiMsgResetDate = today; } return currentUser.aiMsgCount || 0; }
         async function incrementAIMsgCount() { const n = (currentUser.aiMsgCount || 0) + 1; await updateDoc(doc(db, "users", currentUser.email), { aiMsgCount: n }); currentUser.aiMsgCount = n; updateAICounterBar(); }
         function isPremiumUser() { return currentUser.isPremium || currentUser.isAdmin || false; }
-        function updateAICounterBar() {
-            const bar = document.getElementById('ai-counter-bar'), text = document.getElementById('ai-counter-text');
-            if (chatType === 'direct' && activeChat && activeChat.email === AI_BOT_EMAIL) { bar.classList.remove('hidden'); if (isPremiumUser()) text.innerHTML = `<i class="fa-solid fa-crown mr-1 text-amber-500"></i> بريميوم - رسائل غير محدودة`; else { const r = Math.max(0, FREE_AI_LIMIT - (currentUser.aiMsgCount || 0)); text.innerHTML = `<i class="fa-solid fa-robot mr-1"></i> رسائل KimoAI المتبقية اليوم: ${r}/${FREE_AI_LIMIT}`; } } else bar.classList.add('hidden');
-        }
-        window.upgradeToPremium = async () => { if (isPremiumUser()) return showToast("أنت بالفعل بريميوم!", "info"); if (currentUser.xCoins < PREMIUM_COST) return showToast(`تحتاج ${PREMIUM_COST} عملة X`, "error"); if (!confirm(`شراء بريميوم مقابل ${PREMIUM_COST} X؟`)) return; await updateDoc(doc(db, "users", currentUser.email), { isPremium: true, xCoins: currentUser.xCoins - PREMIUM_COST }); showToast("تم تفعيل البريميوم!", "success"); confetti({ particleCount: 200, spread: 120, origin: { y: 0.6 } }); closeModals(); };
+        function updateAICounterBar() { const bar = document.getElementById('ai-counter-bar'), text = document.getElementById('ai-counter-text'); if (chatType === 'direct' && activeChat && activeChat.email === AI_BOT_EMAIL) { bar.classList.remove('hidden'); if (isPremiumUser()) text.innerHTML = `<i class="fa-solid fa-crown mr-1 text-amber-500"></i> بريميوم - رسائل غير محدودة`; else { const r = Math.max(0, FREE_AI_LIMIT - (currentUser.aiMsgCount || 0)); text.innerHTML = `<i class="fa-solid fa-robot mr-1"></i> رسائل KimoAI المتبقية: ${r}/${FREE_AI_LIMIT}`; } } else bar.classList.add('hidden'); }
+        window.upgradeToPremium = async () => { if (isPremiumUser()) return showToast("أنت بريميوم!", "info"); if (currentUser.xCoins < PREMIUM_COST) return showToast(`تحتاج ${PREMIUM_COST} X`, "error"); if (!confirm(`شراء بريميوم مقابل ${PREMIUM_COST} X؟`)) return; await updateDoc(doc(db, "users", currentUser.email), { isPremium: true, xCoins: currentUser.xCoins - PREMIUM_COST }); showToast("تم تفعيل البريميوم!", "success"); confetti({ particleCount: 200, spread: 120, origin: { y: 0.6 } }); closeModals(); };
 
         // =============================================
-        // 3. نظام Groq AI - بالموديلات الجديدة
+        // 3. البروفايل
+        // =============================================
+        window.openMyProfile = () => {
+            if(!currentUser) return;
+            document.getElementById('profile-avatar').src = currentUser.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            document.getElementById('profile-name').innerText = currentUser.name;
+            document.getElementById('profile-email').innerText = currentUser.email;
+            document.getElementById('profile-bio').innerText = currentUser.bio || "لا يوجد بايو";
+            document.getElementById('profile-coins').innerText = currentUser.xCoins || 0;
+            document.getElementById('profile-friends').innerText = (currentUser.contacts || []).length;
+            document.getElementById('profile-premium-badge').classList.toggle('hidden', !isPremiumUser());
+            // Count groups async
+            getDocs(query(collection(db, "groups"), where("members", "array-contains", currentUser.email))).then(s => { document.getElementById('profile-groups').innerText = s.size; });
+            document.getElementById('modal-profile').classList.remove('hidden');
+        };
+
+        window.openTargetProfile = async () => {
+            if(!activeChat) return;
+            if(chatType === 'direct' && activeChat.email === AI_BOT_EMAIL) return;
+            if(chatType === 'group') return;
+            const uDoc = await getDoc(doc(db, "users", activeChat.email));
+            if(!uDoc.exists()) return;
+            const d = uDoc.data();
+            document.getElementById('profile-avatar').src = d.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            document.getElementById('profile-name').innerText = d.name;
+            document.getElementById('profile-email').innerText = d.email;
+            document.getElementById('profile-bio').innerText = d.bio || "لا يوجد بايو";
+            document.getElementById('profile-coins').innerText = d.xCoins || 0;
+            document.getElementById('profile-friends').innerText = (d.contacts || []).length;
+            document.getElementById('profile-premium-badge').classList.toggle('hidden', !(d.isPremium || d.isAdmin));
+            document.getElementById('modal-profile').classList.remove('hidden');
+        };
+
+        // =============================================
+        // 4. نظام Groq AI
         // =============================================
         function compressImageForAPI(base64DataUrl, maxW = 512, quality = 0.5) {
             return new Promise((resolve) => {
@@ -335,17 +408,17 @@
         }
 
         function buildAPIMessages(history) {
-            const messages = [{ role: "system", content: "أنت مساعد ذكاء اصطناعي اسمك KimoAI في تطبيق KimoUp. تجيب باللغة العربية بشكل أساسي لكنك تتقن كل اللغات. تساعد في الإجابة على الأسئلة والتحليل والكتابة والبرمجة والمحادثة. إذا أُرسلت صورة قم بتحليلها ووصفها. ردودك يجب أن تكون كاملة ومفيدة ومباشرة. استخدم الإيموجي بشكل معتدل." }];
+            const messages = [{ role: "system", content: "أنت مساعد ذكاء اصطناعي اسمك KimoAI. تجيب بالعربية بشكل أساسي. ردودك كاملة ومفيدة ومباشرة. استخدم الإيموجي بشكل معتدل." }];
             const recent = history.slice(-20);
             let lastImgIdx = -1;
             for (let i = recent.length - 1; i >= 0; i--) { if (recent[i].type === 'image' && recent[i].sender !== AI_BOT_EMAIL) { lastImgIdx = i; break; } }
             for (let i = 0; i < recent.length; i++) {
                 const msg = recent[i], isBot = msg.sender === AI_BOT_EMAIL, role = isBot ? "assistant" : "user";
                 if (msg.type === 'gift' || msg.type === 'voice') continue;
-                if (msg.type === 'text') { const txt = msg.text || ""; if (txt) messages.push({ role, content: txt }); }
+                if (msg.type === 'text') { if (msg.text) messages.push({ role, content: msg.text }); }
                 else if (msg.type === 'image' && !isBot) {
-                    if (i === lastImgIdx && msg.url) messages.push({ role, content: [{ type: "text", text: msg.text || "قم بتحليل هذه الصورة" }, { type: "image_url", image_url: { url: msg.url } }] });
-                    else messages.push({ role, content: "[أرسل المستخدم صورة]" });
+                    if (i === lastImgIdx && msg.url) messages.push({ role, content: [{ type: "text", text: msg.text || "حلل الصورة" }, { type: "image_url", image_url: { url: msg.url } }] });
+                    else messages.push({ role, content: "[صورة]" });
                 }
             }
             return messages;
@@ -364,9 +437,7 @@
                 clearTimeout(timeout);
                 if (!response.ok) { let errText = ""; try { const e = await response.json(); errText = e.error?.message || JSON.stringify(e); } catch(e2) { errText = `HTTP ${response.status}`; } throw new Error(errText); }
                 const data = await response.json();
-                const reply = data.choices?.[0]?.message?.content;
-                if (!reply) throw new Error("رد فاضي من الAPI");
-                return reply;
+                return data.choices?.[0]?.message?.content || "لم أستطع توليد رد.";
             } catch (error) { clearTimeout(timeout); throw error; }
         }
 
@@ -374,18 +445,16 @@
             isBotProcessing = true; showTypingIndicator();
             try {
                 const chatId = getChatId(AI_BOT_EMAIL);
-                const q = query(collection(db, "chats", chatId, "messages"), orderBy("time", "asc"));
-                const snap = await getDocs(q);
+                const snap = await getDocs(query(collection(db, "chats", chatId, "messages"), orderBy("time", "asc")));
                 const history = []; snap.forEach(d => history.push({ id: d.id, ...d.data() }));
                 let apiMessages;
                 if (imageOverride) {
-                    apiMessages = [{ role: "system", content: "أنت مساعد ذكاء اصطناعي اسمك KimoAI. تجيب بالعربية. ردودك كاملة ومفيدة ومباشرة." }];
-                    const recent = history.slice(-20);
-                    for (const msg of recent) {
+                    apiMessages = [{ role: "system", content: "أنت KimoAI. تجيب بالعربية. ردودك كاملة ومفيدة." }];
+                    for (const msg of history.slice(-20)) {
                         const isBot = msg.sender === AI_BOT_EMAIL, role = isBot ? "assistant" : "user";
                         if (msg.type === 'gift' || msg.type === 'voice') continue;
                         if (msg.type === 'text') { if (msg.text) apiMessages.push({ role, content: msg.text }); }
-                        else if (msg.type === 'image' && !isBot) apiMessages.push({ role, content: [{ type: "text", text: msg.text || "قم بتحليل هذه الصورة" }, { type: "image_url", image_url: { url: imageOverride } }] });
+                        else if (msg.type === 'image' && !isBot) apiMessages.push({ role, content: [{ type: "text", text: msg.text || "حلل الصورة" }, { type: "image_url", image_url: { url: imageOverride } }] });
                     }
                 } else { apiMessages = buildAPIMessages(history); }
                 if (!apiMessages.some(m => m.role === "user")) { isBotProcessing = false; hideTypingIndicator(); return; }
@@ -395,16 +464,16 @@
             } catch (error) {
                 console.error("Bot Error:", error);
                 const chatId = getChatId(AI_BOT_EMAIL);
-                await addDoc(collection(db, "chats", chatId, "messages"), { type: 'text', text: `حصل خطأ: ${error.message}`, sender: AI_BOT_EMAIL, senderName: AI_BOT_NAME, time: serverTimestamp(), status: 'sent' });
+                await addDoc(collection(db, "chats", chatId, "messages"), { type: 'text', text: `خطأ: ${error.message}`, sender: AI_BOT_EMAIL, senderName: AI_BOT_NAME, time: serverTimestamp(), status: 'sent' });
             } finally { isBotProcessing = false; hideTypingIndicator(); }
         }
 
         function showTypingIndicator() { const box = document.getElementById('messages-area'); if (document.getElementById('typing-indicator')) return; const div = document.createElement('div'); div.id = 'typing-indicator'; div.className = 'self-start flex flex-col items-start'; div.innerHTML = `<p class="text-[10px] font-bold text-indigo-500 mb-1 ml-2"><i class="fa-solid fa-robot text-[8px]"></i> ${AI_BOT_NAME}</p><div class="bg-white border border-gray-100 p-4 rounded-2xl rounded-bl-none shadow-sm"><div class="typing-dots"><span></span><span></span><span></span></div></div>`; box.appendChild(div); box.scrollTop = box.scrollHeight; }
         function hideTypingIndicator() { const el = document.getElementById('typing-indicator'); if (el) el.remove(); }
-        async function sendBotWelcome(chatId) { const q = query(collection(db, "chats", chatId, "messages"), orderBy("time", "asc")); const snap = await getDocs(q); if (snap.empty) await addDoc(collection(db, "chats", chatId, "messages"), { type: 'text', text: 'أهلاً بك! أنا KimoAI مساعدك الذكي.\n\nأقدر أساعدك في:\n- الإجابة على أسئلتك\n- تحليل الصور ووصفها\n- المساعدة في الكتابة والبرمجة\n- المحادثة العامة\n\nجرب ابعتلي رسالة!', sender: AI_BOT_EMAIL, senderName: AI_BOT_NAME, time: serverTimestamp(), status: 'sent' }); }
+        async function sendBotWelcome(chatId) { const snap = await getDocs(query(collection(db, "chats", chatId, "messages"), orderBy("time", "asc"))); if (snap.empty) await addDoc(collection(db, "chats", chatId, "messages"), { type: 'text', text: 'أهلاً بك! أنا KimoAI مساعدك الذكي.\n\nأقدر أساعدك في:\n- الإجابة على أسئلتك\n- تحليل الصور\n- الكتابة والبرمجة\n\nجرب ابعتلي رسالة أو صورة!', sender: AI_BOT_EMAIL, senderName: AI_BOT_NAME, time: serverTimestamp(), status: 'sent' }); }
 
         // =============================================
-        // 4. القائمة الجانبية
+        // 5. القائمة الجانبية
         // =============================================
         window.switchTab = (tab) => { currentTab = tab; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById(`tab-${tab}`).classList.add('active'); document.getElementById('contacts-list').style.display = tab === 'chats' ? 'block' : 'none'; document.getElementById('groups-list').style.display = tab === 'groups' ? 'block' : 'none'; renderSidebarActionArea(); renderSidebar(); };
         function renderSidebarActionArea() { const area = document.getElementById('sidebar-action-area'); if (currentTab === 'chats') area.innerHTML = `<div class="flex gap-2"><input type="email" id="target-email" placeholder="أضف صديق بالإيميل" class="flex-1 p-3 text-xs bg-gray-50 rounded-xl outline-none focus:ring-2 ring-indigo-200"><button onclick="addNewContact()" class="bg-indigo-600 text-white px-4 rounded-xl hover:bg-indigo-700 shadow-md"><i class="fa-solid fa-user-plus"></i></button></div>`; else area.innerHTML = `<button onclick="openCreateGroupModal()" class="w-full p-3 bg-purple-100 text-purple-700 font-bold rounded-xl hover:bg-purple-200 flex justify-center items-center gap-2 border border-purple-200"><i class="fa-solid fa-plus-circle"></i> إنشاء مجتمع</button>`; }
@@ -414,22 +483,169 @@
             if (currentTab === 'chats') {
                 const container = document.getElementById('contacts-list'); container.innerHTML = "";
                 const botCard = document.createElement('div'); botCard.className = 'ai-bot-card flex items-center gap-4';
-                botCard.innerHTML = `<div class="bot-avatar-ring relative z-10"><img src="${AI_BOT_AVATAR}" class="w-12 h-12 rounded-xl object-cover shadow-sm bg-white"></div><div class="flex-1 relative z-10"><p class="text-sm font-black text-indigo-900">${AI_BOT_NAME} \u{1F916}</p><p class="text-[10px] text-indigo-400 font-bold">مساعد الذكاء الاصطناعي - يدعم الصور</p></div><div class="relative z-10"><span class="bg-indigo-600 text-white text-[8px] font-black px-2 py-1 rounded-lg shadow-md">AI</span></div>`;
+                botCard.innerHTML = `<div class="bot-avatar-ring relative z-10"><img src="${AI_BOT_AVATAR}" class="w-12 h-12 rounded-xl object-cover shadow-sm bg-white"></div><div class="flex-1 relative z-10"><p class="text-sm font-black text-indigo-900">${AI_BOT_NAME} \u{1F916}</p><p class="text-[10px] text-indigo-400 font-bold">مساعد ذكاء اصطناعي</p></div><div class="relative z-10"><span class="bg-indigo-600 text-white text-[8px] font-black px-2 py-1 rounded-lg shadow-md">AI</span></div>`;
                 botCard.onclick = () => openChat(AI_BOT_DATA, 'direct'); container.appendChild(botCard);
                 for (const email of (currentUser.contacts || [])) { const uDoc = await getDoc(doc(db, "users", email)); if(uDoc.exists()) { const data = Object.assign({ email: uDoc.id }, uDoc.data()); const div = document.createElement('div'); div.className = "flex items-center gap-4 p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-50 transition"; div.innerHTML = `<div class="relative"><img src="${data.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="w-12 h-12 rounded-xl object-cover shadow-sm bg-white">${data.isOnline ? '<div class="online-dot"></div>' : ''}</div><div class="flex-1"><p class="text-sm font-bold text-gray-800">${data.name} ${data.badge || ''} ${data.isPremium ? '\u{1F451}' : ''}</p><p class="text-[10px] text-gray-400 mt-1">${data.isOnline ? 'متصل الآن' : 'غير متصل'}</p></div>`; div.onclick = () => openChat(data, 'direct'); container.appendChild(div); } }
-            } else { const container = document.getElementById('groups-list'); onSnapshot(query(collection(db, "groups"), where("members", "array-contains", currentUser.email)), (snap) => { if (currentTab !== 'groups') return; container.innerHTML = ""; if(snap.empty) { container.innerHTML = `<p class="text-center text-xs text-gray-400 mt-10">لا توجد جروبات</p>`; return; } snap.forEach(gDoc => { const g = Object.assign({ id: gDoc.id }, gDoc.data()); const icon = g.type === 'channel' ? 'fa-bullhorn text-amber-500' : 'fa-users text-purple-500'; const div = document.createElement('div'); div.className = "flex items-center gap-4 p-4 hover:bg-purple-50 cursor-pointer border-b border-gray-50 transition"; div.innerHTML = `<div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center shadow-sm"><i class="fa-solid ${icon} text-xl"></i></div><div class="flex-1"><p class="text-sm font-bold text-gray-800">${g.name}</p><p class="text-[10px] text-gray-400 mt-1">${g.members.length} عضو</p></div>`; div.onclick = () => openChat(g, 'group'); container.appendChild(div); }); }); }
+            } else { const container = document.getElementById('groups-list'); onSnapshot(query(collection(db, "groups"), where("members", "array-contains", currentUser.email)), (snap) => { if (currentTab !== 'groups') return; container.innerHTML = ""; if(snap.empty) { container.innerHTML = `<p class="text-center text-xs text-gray-400 mt-10">لا توجد مجتمعات</p>`; return; } snap.forEach(gDoc => { const g = Object.assign({ id: gDoc.id }, gDoc.data()); const icon = g.type === 'channel' ? 'fa-bullhorn text-amber-500' : 'fa-users text-purple-500'; const lockIcon = g.inviteOnly ? '<i class="fa-solid fa-lock text-[10px] text-gray-400 mr-1"></i>' : ''; const div = document.createElement('div'); div.className = "flex items-center gap-4 p-4 hover:bg-purple-50 cursor-pointer border-b border-gray-50 transition"; div.innerHTML = `<div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center shadow-sm"><i class="fa-solid ${icon} text-xl"></i></div><div class="flex-1"><p class="text-sm font-bold text-gray-800">${lockIcon}${g.name}</p><p class="text-[10px] text-gray-400 mt-1">${g.members.length} عضو</p></div>`; div.onclick = () => openChat(g, 'group'); container.appendChild(div); }); }); }
         }
 
         // =============================================
-        // 5. الجروبات
+        // 6. نظام الجروبات والقنوات المحسن
         // =============================================
+        function generateInviteCode() { return Math.random().toString(36).substring(2, 10); }
+
         window.openCreateGroupModal = () => document.getElementById('modal-group').classList.remove('hidden');
-        window.createGroup = async () => { const name = document.getElementById('group-name').value.trim(), type = document.getElementById('group-type').value; if(!name) return showToast("أدخل اسم المجتمع", "error"); await addDoc(collection(db, "groups"), { name, type, admin: currentUser.email, members: [currentUser.email], createdAt: serverTimestamp() }); closeModals(); showToast("تم الإنشاء", "success"); switchTab('groups'); };
-        window.copyGroupLink = () => { if(chatType !== 'group' || !activeChat) return; navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?join=${activeChat.id}`); showToast("تم نسخ الرابط!", "success"); };
-        async function checkInviteLink() { const p = new URLSearchParams(window.location.search), j = p.get('join'); if(j && currentUser) { const r = doc(db, "groups", j), s = await getDoc(r); if(s.exists() && !s.data().members.includes(currentUser.email)) { if(confirm(`الانضمام إلى "${s.data().name}"؟`)) { await updateDoc(r, { members: arrayUnion(currentUser.email) }); showToast("تم الانضمام!", "success"); switchTab('groups'); } } window.history.replaceState({}, document.title, window.location.pathname); } }
+
+        window.createGroup = async () => {
+            const name = document.getElementById('group-name').value.trim();
+            const type = document.getElementById('group-type').value;
+            const inviteOnly = document.getElementById('group-invite-only').checked;
+            if(!name) return showToast("أدخل اسم المجتمع", "error");
+            const inviteCode = generateInviteCode();
+            await addDoc(collection(db, "groups"), { name, type, admin: currentUser.email, admins: [currentUser.email], members: [currentUser.email], inviteOnly, inviteCode, createdAt: serverTimestamp() });
+            closeModals(); showToast("تم إنشاء المجتمع!", "success"); switchTab('groups');
+        };
+
+        window.copyGroupLink = () => {
+            if(chatType !== 'group' || !activeChat) return;
+            const code = activeChat.inviteCode || activeChat.id;
+            const link = `${window.location.origin}${window.location.pathname}?join=${code}`;
+            navigator.clipboard.writeText(link).then(() => showToast("تم نسخ رابط الدعوة!", "success")).catch(() => showToast("تم نسخ الكود: " + code, "success"));
+        };
+
+        window.showGroupMembers = async () => {
+            if(chatType !== 'group' || !activeChat) return;
+            const gSnap = await getDoc(doc(db, "groups", activeChat.id));
+            if(!gSnap.exists()) return;
+            const gData = gSnap.data();
+            const isGroupAdmin = (gData.admins || [gData.admin]).includes(currentUser.email);
+            // في القناة: الأدمن بس يشوف الأعضاء
+            if(gData.type === 'channel' && !isGroupAdmin) return showToast("فقط الأدمن يمكنه رؤية الأعضاء في القناة", "error");
+            const container = document.getElementById('members-list'); container.innerHTML = "";
+            for (const email of gData.members) {
+                const uDoc = await getDoc(doc(db, "users", email));
+                if(uDoc.exists()) {
+                    const d = uDoc.data();
+                    const isAdmin = (gData.admins || [gData.admin]).includes(email);
+                    const isCreator = email === gData.admin;
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center gap-3 p-3 bg-gray-50 rounded-2xl';
+                    div.innerHTML = `<img src="${d.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="w-10 h-10 rounded-xl object-cover"><div class="flex-1"><p class="text-sm font-bold text-gray-800">${d.name} ${isCreator ? '\u{1F451}' : isAdmin ? '\u{1F6E1}\u{FE0F}' : ''}</p><p class="text-[10px] text-gray-400">${isCreator ? 'المالك' : isAdmin ? 'أدمن' : 'عضو'}</p></div>`;
+                    // لو أدمن يقدر يعين أدمن أو يطرد
+                    if(isGroupAdmin && email !== currentUser.email && !isCreator) {
+                        const actionsDiv = document.createElement('div');
+                        actionsDiv.className = 'flex gap-1';
+                        if(!isAdmin) { const promoteBtn = document.createElement('button'); promoteBtn.className = 'bg-indigo-100 text-indigo-600 px-3 py-1 rounded-lg text-[10px] font-bold hover:bg-indigo-200'; promoteBtn.innerText = 'أدمن'; promoteBtn.onclick = () => promoteMember(activeChat.id, email); actionsDiv.appendChild(promoteBtn); }
+                        const kickBtn = document.createElement('button'); kickBtn.className = 'bg-red-100 text-red-600 px-3 py-1 rounded-lg text-[10px] font-bold hover:bg-red-200'; kickBtn.innerText = 'طرد'; kickBtn.onclick = () => kickMember(activeChat.id, email); actionsDiv.appendChild(kickBtn);
+                        div.appendChild(actionsDiv);
+                    }
+                    container.appendChild(div);
+                }
+            }
+            document.getElementById('modal-members').classList.remove('hidden');
+        };
+
+        async function promoteMember(groupId, email) {
+            const ref = doc(db, "groups", groupId);
+            await updateDoc(ref, { admins: arrayUnion(email) });
+            showToast("تم تعيين أدمن", "success");
+            closeModals(); showGroupMembers();
+        }
+
+        async function kickMember(groupId, email) {
+            if(!confirm("طرد هذا العضو؟")) return;
+            const ref = doc(db, "groups", groupId);
+            const snap = await getDoc(ref);
+            const members = snap.data().members.filter(m => m !== email);
+            const admins = (snap.data().admins || []).filter(a => a !== email);
+            await updateDoc(ref, { members, admins });
+            showToast("تم طرد العضو", "success");
+            closeModals(); showGroupMembers();
+        }
+
+        window.showGroupSettings = async () => {
+            if(chatType !== 'group' || !activeChat) return;
+            const gSnap = await getDoc(doc(db, "groups", activeChat.id));
+            if(!gSnap.exists()) return;
+            const gData = gSnap.data();
+            const isGroupAdmin = (gData.admins || [gData.admin]).includes(currentUser.email);
+            if(!isGroupAdmin) return showToast("فقط الأدمن يمكنه إدارة المجتمع", "error");
+            document.getElementById('invite-only-text').innerText = `بدعوة فقط: ${gData.inviteOnly ? 'مفعل' : 'إيقاف'}`;
+            document.getElementById('modal-group-settings').classList.remove('hidden');
+        };
+
+        window.toggleInviteOnly = async () => {
+            if(!activeChat) return;
+            const ref = doc(db, "groups", activeChat.id);
+            const snap = await getDoc(ref);
+            const current = snap.data().inviteOnly || false;
+            await updateDoc(ref, { inviteOnly: !current });
+            activeChat.inviteOnly = !current;
+            document.getElementById('invite-only-text').innerText = `بدعوة فقط: ${!current ? 'مفعل' : 'إيقاف'}`;
+            showToast(`تم ${!current ? 'تفعيل' : 'إيقاف'} نظام الدعوة`, "success");
+        };
+
+        window.deleteGroup = async () => {
+            if(!activeChat) return;
+            if(!confirm("هل تريد حذف هذا المجتمع نهائياً؟")) return;
+            // حذف كل الرسائل
+            const msgsSnap = await getDocs(collection(db, "groups", activeChat.id, "messages"));
+            for (const mDoc of msgsSnap.docs) { await deleteDoc(mDoc.ref); }
+            await deleteDoc(doc(db, "groups", activeChat.id));
+            closeModals(); showToast("تم حذف المجتمع", "success");
+            document.getElementById('chat-ui').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            renderSidebar();
+        };
+
+        // نظام الدعوة
+        async function checkInviteLink() {
+            const p = new URLSearchParams(window.location.search);
+            const code = p.get('join');
+            if(!code || !currentUser) return;
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+            // ندور على الجروب بالكود
+            const q = query(collection(db, "groups"), where("inviteCode", "==", code));
+            const snap = await getDocs(q);
+            if(snap.empty) {
+                // ممكن يكون ID قديم
+                const gRef = doc(db, "groups", code);
+                const gSnap = await getDoc(gRef);
+                if(gSnap.exists()) { showInviteScreen(gSnap.data(), code); }
+                else showToast("رابط الدعوة غير صالح", "error");
+            } else {
+                snap.forEach(gDoc => { showInviteScreen(Object.assign({ id: gDoc.id }, gDoc.data()), code); });
+            }
+        }
+
+        function showInviteScreen(gData) {
+            pendingInviteCode = gData.inviteCode || gData.id;
+            document.getElementById('invite-group-name').innerText = gData.name;
+            document.getElementById('invite-group-type').innerText = gData.type === 'channel' ? 'قناة' : 'جروب عام';
+            document.getElementById('invite-screen').classList.remove('hidden');
+        }
+
+        window.acceptInvite = async () => {
+            if(!pendingInviteCode || !currentUser) return;
+            // ندور بالكود
+            let groupRef, groupData;
+            const q = query(collection(db, "groups"), where("inviteCode", "==", pendingInviteCode));
+            const snap = await getDocs(q);
+            if(!snap.empty) { groupRef = doc(db, "groups", snap.docs[0].id); groupData = snap.docs[0].data(); }
+            else { groupRef = doc(db, "groups", pendingInviteCode); const s = await getDoc(groupRef); if(!s.exists()) { showToast("الرابط غير صالح", "error"); declineInvite(); return; } groupData = s.data(); }
+
+            if((groupData.members || []).includes(currentUser.email)) { showToast("أنت عضو بالفعل!", "info"); declineInvite(); return; }
+            await updateDoc(groupRef, { members: arrayUnion(currentUser.email) });
+            showToast("تم الانضمام بنجاح!", "success");
+            declineInvite();
+            switchTab('groups');
+        };
+
+        window.declineInvite = () => { pendingInviteCode = null; document.getElementById('invite-screen').classList.add('hidden'); };
 
         // =============================================
-        // 6. المحادثات والرسائل
+        // 7. المحادثات
         // =============================================
         function getChatId(targetEmail) { return [currentUser.email, targetEmail].sort().join('_'); }
 
@@ -438,11 +654,17 @@
             document.getElementById('welcome-screen').classList.add('hidden');
             document.getElementById('chat-ui').classList.remove('hidden');
             const isBotChat = type === 'direct' && target.email === AI_BOT_EMAIL;
+
+            // Reset buttons
+            document.getElementById('group-link-btn').classList.add('hidden');
+            document.getElementById('group-members-btn').classList.add('hidden');
+            document.getElementById('group-settings-btn').classList.add('hidden');
+            document.getElementById('gift-btn').classList.remove('hidden');
+
             if (type === 'direct') {
                 document.getElementById('target-img').src = target.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
                 document.getElementById('target-name').innerHTML = `${target.name} <span class="text-sm">${target.badge || ''}</span>`;
-                document.getElementById('target-subtitle').innerText = isBotChat ? 'مساعد الذكاء الاصطناعي - يدعم الصور' : target.email;
-                document.getElementById('group-link-btn').classList.add('hidden');
+                document.getElementById('target-subtitle').innerText = isBotChat ? 'مساعد ذكاء اصطناعي' : target.email;
                 document.getElementById('gift-btn').classList.toggle('hidden', isBotChat);
                 document.getElementById('channel-overlay').classList.add('hidden');
                 document.getElementById('chat-input-area').classList.remove('hidden');
@@ -451,14 +673,17 @@
                 else { onSnapshot(doc(db, "users", target.email), (snap) => { snap.exists() && snap.data().isOnline ? uiOnline.classList.remove('hidden') : uiOnline.classList.add('hidden'); }); }
                 loadMessages(getChatId(target.email), "chats");
             } else {
-                const isChannel = target.type === 'channel', isAdmin = target.admin === currentUser.email;
+                const isChannel = target.type === 'channel';
+                const isGroupAdmin = (target.admins || [target.admin]).includes(currentUser.email);
                 document.getElementById('target-img').src = 'https://cdn-icons-png.flaticon.com/512/1256/1256650.png';
                 document.getElementById('target-name').innerText = target.name;
-                document.getElementById('target-subtitle').innerText = `${target.members.length} أعضاء - ${isChannel ? 'قناة' : 'جروب'}`;
+                document.getElementById('target-subtitle').innerText = `${target.members.length} أعضاء - ${isChannel ? 'قناة' : 'جروب'}${target.inviteOnly ? ' - بدعوة' : ''}`;
                 document.getElementById('target-online-status').classList.add('hidden');
-                document.getElementById('group-link-btn').classList.remove('hidden');
                 document.getElementById('gift-btn').classList.add('hidden');
-                if(isChannel && !isAdmin) { document.getElementById('chat-input-area').classList.add('hidden'); document.getElementById('channel-overlay').classList.remove('hidden'); }
+                document.getElementById('group-link-btn').classList.remove('hidden');
+                document.getElementById('group-members-btn').classList.remove('hidden');
+                if(isGroupAdmin) document.getElementById('group-settings-btn').classList.remove('hidden');
+                if(isChannel && !isGroupAdmin) { document.getElementById('chat-input-area').classList.add('hidden'); document.getElementById('channel-overlay').classList.remove('hidden'); }
                 else { document.getElementById('chat-input-area').classList.remove('hidden'); document.getElementById('channel-overlay').classList.add('hidden'); }
                 loadMessages(target.id, "groups");
             }
@@ -479,73 +704,34 @@
                     const statusIcon = chatType === 'direct' && isMe && !isBotMsg ? (m.status === 'read' ? '<i class="fa-solid fa-check-double text-blue-300 ml-1 text-[10px]"></i>' : '<i class="fa-solid fa-check text-indigo-200 ml-1 text-[10px]"></i>') : '';
                     const nameLabel = (!isMe && chatType === 'group') ? `<p class="text-[10px] font-bold text-indigo-500 mb-1 ml-2">${m.senderName}</p>` : '';
                     const botLabel = isBotMsg && !isMe ? `<p class="text-[10px] font-bold text-indigo-500 mb-1 ml-2"><i class="fa-solid fa-robot text-[8px]"></i> ${AI_BOT_NAME}</p>` : '';
-
                     let html = '';
-                    if (m.type === 'gift') {
-                        const claimed = m.status === 'claimed';
-                        html = `<div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 p-6 rounded-3xl text-center shadow-lg my-2 w-64"><div class="${claimed ? 'gift-claimed' : 'gift-bear'}" onclick="claimGift('${msgId}',${m.amount},${isMe},'${m.status}','${collectionId}')">\u{1F9F8}</div><div class="mt-4 bg-white/60 p-2 rounded-xl"><p class="text-xs font-black text-amber-700">دبدوب ${m.amount} X</p><p class="text-[9px] font-bold text-gray-500 mt-1">${claimed ? 'تم الاستلام' : (isMe ? 'أرسلت هدية' : 'اضغط للاستلام')}</p></div></div>`;
-                    } else if (m.type === 'image') {
-                        const bc = isBotMsg ? 'bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-bl-none' : (isMe ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white border border-gray-100 rounded-bl-none');
-                        html = `<div class="msg-bubble max-w-[85%] sm:max-w-[70%] p-1 rounded-2xl shadow-sm ${bc}"><img src="${m.url}" onclick="window.open('${m.url}')"><div class="text-left mt-1 px-2">${statusIcon}</div></div>`;
-                    } else if (m.type === 'voice') {
-                        const bc = isMe ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white border border-gray-100 rounded-bl-none';
-                        html = `<div class="msg-bubble max-w-[85%] sm:max-w-[70%] p-3 rounded-2xl shadow-sm ${bc} flex items-center gap-2"><audio controls src="${m.audio}" class="h-8 w-48"></audio>${statusIcon}</div>`;
-                    } else {
-                        if (isBotMsg) {
-                            html = `<div class="msg-bubble max-w-[85%] sm:max-w-[70%] p-4 rounded-2xl shadow-sm bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 text-gray-800 rounded-bl-none"><div class="bot-msg-text">${formatBotText(m.text)}</div><div class="text-left mt-2 text-[10px] opacity-60"><i class="fa-solid fa-robot text-indigo-300 mr-1"></i>${statusIcon}</div></div>`;
-                        } else {
-                            const bc = isMe ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none';
-                            html = `<div class="msg-bubble max-w-[85%] sm:max-w-[70%] p-3 rounded-2xl shadow-sm ${bc}"><p class="user-msg-text">${escapeHTML(m.text)}</p><div class="text-left mt-1 text-[10px] opacity-70">${statusIcon}</div></div>`;
-                        }
-                    }
+                    if (m.type === 'gift') { const claimed = m.status === 'claimed'; html = `<div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 p-6 rounded-3xl text-center shadow-lg my-2 w-64"><div class="${claimed ? 'gift-claimed' : 'gift-bear'}" onclick="claimGift('${msgId}',${m.amount},${isMe},'${m.status}','${collectionId}')">\u{1F9F8}</div><div class="mt-4 bg-white/60 p-2 rounded-xl"><p class="text-xs font-black text-amber-700">دبدوب ${m.amount} X</p><p class="text-[9px] font-bold text-gray-500 mt-1">${claimed ? 'تم الاستلام' : (isMe ? 'أرسلت' : 'اضغط')}</p></div></div>`; }
+                    else if (m.type === 'image') { const bc = isBotMsg ? 'bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-bl-none' : (isMe ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white border border-gray-100 rounded-bl-none'); html = `<div class="msg-bubble max-w-[85%] sm:max-w-[70%] p-1 rounded-2xl shadow-sm ${bc}"><img src="${m.url}" onclick="window.open('${m.url}')" style="max-width:250px;border-radius:10px"><div class="text-left mt-1 px-2">${statusIcon}</div></div>`; }
+                    else if (m.type === 'voice') { const bc = isMe ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white border border-gray-100 rounded-bl-none'; html = `<div class="msg-bubble max-w-[85%] sm:max-w-[70%] p-3 rounded-2xl shadow-sm ${bc} flex items-center gap-2"><audio controls src="${m.audio}" class="h-8 w-48"></audio>${statusIcon}</div>`; }
+                    else { if (isBotMsg) { html = `<div class="msg-bubble max-w-[85%] sm:max-w-[70%] p-4 rounded-2xl shadow-sm bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 text-gray-800 rounded-bl-none"><div class="bot-msg-text">${formatBotText(m.text)}</div><div class="text-left mt-2 text-[10px] opacity-60"><i class="fa-solid fa-robot text-indigo-300 mr-1"></i>${statusIcon}</div></div>`; } else { const bc = isMe ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none'; html = `<div class="msg-bubble max-w-[85%] sm:max-w-[70%] p-3 rounded-2xl shadow-sm ${bc}"><p class="user-msg-text">${escapeHTML(m.text)}</p><div class="text-left mt-1 text-[10px] opacity-70">${statusIcon}</div></div>`; } }
                     div.innerHTML = (isBotMsg ? botLabel : nameLabel) + html;
                     box.appendChild(div);
+                    // إشعار
+                    if (!isMe && document.hidden && m.status !== 'read') { sendNotif(chatType === 'group' ? (activeChat?.name || 'جروب') : m.senderName, m.type === 'text' ? m.text : 'رسالة جديدة'); }
                 });
                 box.scrollTop = box.scrollHeight;
             });
         }
 
-        // تنسيق نص البوت
-        function formatBotText(text) {
-            if (!text) return '';
-            let h = text;
-            h = h.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-            h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
-            h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-            h = h.replace(/^### (.+)$/gm, '<strong style="font-size:1.1em">$1</strong>');
-            h = h.replace(/^## (.+)$/gm, '<strong style="font-size:1.2em">$1</strong>');
-            h = h.replace(/^# (.+)$/gm, '<strong style="font-size:1.3em">$1</strong>');
-            h = h.replace(/^\d+\.\s+(.+)$/gm, '<div style="padding-right:15px">\u2022 $1</div>');
-            h = h.replace(/^[-*]\s+(.+)$/gm, '<div style="padding-right:15px">\u2022 $1</div>');
-            h = h.replace(/\n\n/g, '<br><br>');
-            h = h.replace(/\n/g, '<br>');
-            return h;
-        }
-
-        // تنظيف نص المستخدم - نحول الأسطر لbr
-        function escapeHTML(text) {
-            if (!text) return '';
-            let safe = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            safe = safe.replace(/\n/g, '<br>');
-            return safe;
-        }
+        function formatBotText(text) { if (!text) return ''; let h = text; h = h.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code>$2</code></pre>'); h = h.replace(/`([^`]+)`/g, '<code>$1</code>'); h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); h = h.replace(/^### (.+)$/gm, '<strong style="font-size:1.1em">$1</strong>'); h = h.replace(/^## (.+)$/gm, '<strong style="font-size:1.2em">$1</strong>'); h = h.replace(/^# (.+)$/gm, '<strong style="font-size:1.3em">$1</strong>'); h = h.replace(/^\d+\.\s+(.+)$/gm, '<div style="padding-right:15px">\u2022 $1</div>'); h = h.replace(/^[-*]\s+(.+)$/gm, '<div style="padding-right:15px">\u2022 $1</div>'); h = h.replace(/\n\n/g, '<br><br>'); h = h.replace(/\n/g, '<br>'); return h; }
+        function escapeHTML(text) { if (!text) return ''; return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'); }
 
         // =============================================
-        // 7. الإرسال
+        // 8. الإرسال
         // =============================================
-        async function saveMessageToDB(msgData) {
-            if(!activeChat) return;
-            const parent = chatType === 'group' ? 'groups' : 'chats';
-            const id = chatType === 'group' ? activeChat.id : getChatId(activeChat.email);
-            await addDoc(collection(db, parent, id, "messages"), { ...msgData, sender: currentUser.email, senderName: currentUser.name, time: serverTimestamp(), status: 'sent' });
-        }
+        async function saveMessageToDB(msgData) { if(!activeChat) return; const parent = chatType === 'group' ? 'groups' : 'chats'; const id = chatType === 'group' ? activeChat.id : getChatId(activeChat.email); await addDoc(collection(db, parent, id, "messages"), { ...msgData, sender: currentUser.email, senderName: currentUser.name, time: serverTimestamp(), status: 'sent' }); }
 
         window.sendMessage = async () => {
             const el = document.getElementById('msg-input'), txt = el.value.trim();
             if(!txt) return;
             const isBotChat = chatType === 'direct' && activeChat && activeChat.email === AI_BOT_EMAIL;
-            if (isBotChat && isBotProcessing) return showToast("انتظر حتى يكمل KimoAI الرد...", "info");
-            if (isBotChat && !isPremiumUser()) { const c = await getAIMsgCount(); if (c >= FREE_AI_LIMIT) return showToast(`استنفدت ${FREE_AI_LIMIT} رسائل KimoAI اليومية!`, "error"); }
+            if (isBotChat && isBotProcessing) return showToast("انتظر KimoAI...", "info");
+            if (isBotChat && !isPremiumUser()) { const c = await getAIMsgCount(); if (c >= FREE_AI_LIMIT) return showToast(`استنفدت ${FREE_AI_LIMIT} رسائل اليوم!`, "error"); }
             el.value = ""; document.getElementById('emoji-picker').style.display = 'none';
             await saveMessageToDB({ type: 'text', text: txt });
             if (isBotChat) { if (!isPremiumUser()) await incrementAIMsgCount(); handleBotResponse(); }
@@ -559,45 +745,34 @@
             const isBotChat = chatType === 'direct' && activeChat && activeChat.email === AI_BOT_EMAIL;
             const reader = new FileReader();
             reader.onloadend = async () => {
-                if (isBotChat && !isPremiumUser()) { const c = await getAIMsgCount(); if (c >= FREE_AI_LIMIT) return showToast(`استنفدت ${FREE_AI_LIMIT} رسائل KimoAI اليومية!`, "error"); }
+                if (isBotChat && !isPremiumUser()) { const c = await getAIMsgCount(); if (c >= FREE_AI_LIMIT) return showToast(`استنفدت الرسائل اليوم!`, "error"); }
                 showToast("جاري إرسال الصورة...", "info");
                 const originalUrl = reader.result;
                 await saveMessageToDB({ type: 'image', url: originalUrl });
                 if (isBotChat) { if (!isPremiumUser()) await incrementAIMsgCount(); const compressedUrl = await compressImageForAPI(originalUrl, 512, 0.5); handleBotResponse(compressedUrl); }
             };
             reader.readAsDataURL(file);
+            document.getElementById('chat-file-input').value = "";
         };
 
         const vBtn = document.getElementById('voice-btn');
         vBtn.onmousedown = async () => { try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); mediaRecorder = new MediaRecorder(stream); mediaRecorder.start(); audioChunks = []; vBtn.classList.add('bg-red-500', 'text-white', 'animate-pulse'); mediaRecorder.ondataavailable = e => audioChunks.push(e.data); mediaRecorder.onstop = async () => { const blob = new Blob(audioChunks, { type: 'audio/mp3' }); const r = new FileReader(); r.readAsDataURL(blob); r.onloadend = async () => { await saveMessageToDB({ type: 'voice', audio: r.result }); }; }; } catch (e) { showToast("صلاحية الميكروفون مطلوبة", "error"); } };
         vBtn.onmouseup = () => { if(mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); vBtn.classList.remove('bg-red-500', 'text-white', 'animate-pulse'); } };
 
-        window.sendXGift = async () => {
-            if(chatType !== 'direct' || (activeChat && activeChat.email === AI_BOT_EMAIL)) return;
-            const amount = parseInt(prompt("كمية X داخل الدبدوب:"));
-            if(isNaN(amount) || amount <= 0) return;
-            if(currentUser.xCoins < amount) return showToast("رصيد غير كافٍ", "error");
-            await updateDoc(doc(db, "users", currentUser.email), { xCoins: currentUser.xCoins - amount });
-            await saveMessageToDB({ type: 'gift', amount, status: 'sent' }); showToast("تم إرسال الدبدوب!", "success");
-        };
-
-        window.claimGift = async (msgId, amount, isMe, status, collectionId) => {
-            if (status === 'claimed') return showToast("تم الاستلام مسبقاً!", "error");
-            if (isMe) return showToast("الهدية لصديقك!", "info");
-            try { await updateDoc(doc(db, "users", currentUser.email), { xCoins: currentUser.xCoins + amount }); await updateDoc(doc(db, "chats", collectionId, "messages", msgId), { status: 'claimed' }); confetti({ particleCount: 300, spread: 150, origin: { y: 0.6 } }); showToast(`مبروك! استلمت ${amount} X`, "success"); } catch (e) { showToast("خطأ", "error"); }
-        };
+        window.sendXGift = async () => { if(chatType !== 'direct' || (activeChat && activeChat.email === AI_BOT_EMAIL)) return; const amount = parseInt(prompt("كمية X:")); if(isNaN(amount) || amount <= 0) return; if(currentUser.xCoins < amount) return showToast("رصيد غير كافٍ", "error"); await updateDoc(doc(db, "users", currentUser.email), { xCoins: currentUser.xCoins - amount }); await saveMessageToDB({ type: 'gift', amount, status: 'sent' }); showToast("تم الإرسال!", "success"); };
+        window.claimGift = async (msgId, amount, isMe, status, collectionId) => { if (status === 'claimed') return showToast("تم الاستلام!", "error"); if (isMe) return showToast("الهدية لصديقك!", "info"); try { await updateDoc(doc(db, "users", currentUser.email), { xCoins: currentUser.xCoins + amount }); await updateDoc(doc(db, "chats", collectionId, "messages", msgId), { status: 'claimed' }); confetti({ particleCount: 300, spread: 150, origin: { y: 0.6 } }); showToast(`مبروك! ${amount} X`, "success"); } catch (e) { showToast("خطأ", "error"); } };
 
         // =============================================
-        // 8. واجهة المستخدم
+        // 9. إعدادات وواجهة
         // =============================================
         window.toggleEmoji = () => { const p = document.getElementById('emoji-picker'); p.style.display = p.style.display === 'grid' ? 'none' : 'grid'; };
-        window.addEmoji = (e) => { const input = document.getElementById('msg-input'); input.value += e; input.focus(); };
-        window.openSettings = () => { if(!currentUser) return; document.getElementById('set-name').value = currentUser.name; document.getElementById('set-badge').value = currentUser.badge || ""; document.getElementById('preview-img').src = currentUser.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; const pb = document.getElementById('premium-upgrade-btn'), pt = document.getElementById('premium-status-text'); if (isPremiumUser()) { pb.classList.add('hidden'); pt.innerText = 'اشتراكك مفعّل - رسائل غير محدودة'; } else { pb.classList.remove('hidden'); pt.innerText = `رسائل غير محدودة - ${PREMIUM_COST} X`; } document.getElementById('modal-settings').classList.remove('hidden'); };
+        window.addEmoji = (e) => { document.getElementById('msg-input').value += e; document.getElementById('msg-input').focus(); };
+        window.openSettings = () => { if(!currentUser) return; document.getElementById('set-name').value = currentUser.name; document.getElementById('set-bio').value = currentUser.bio || ""; document.getElementById('set-badge').value = currentUser.badge || ""; document.getElementById('preview-img').src = currentUser.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; const pb = document.getElementById('premium-upgrade-btn'), pt = document.getElementById('premium-status-text'); if (isPremiumUser()) { pb.classList.add('hidden'); pt.innerText = 'مفعّل - رسائل غير محدودة'; } else { pb.classList.remove('hidden'); pt.innerText = `غير محدودة - ${PREMIUM_COST} X`; } document.getElementById('modal-settings').classList.remove('hidden'); };
         window.previewAvatar = () => { const file = document.getElementById('avatar-input').files[0]; if(file) { const reader = new FileReader(); reader.onloadend = () => { base64Avatar = reader.result; document.getElementById('preview-img').src = base64Avatar; }; reader.readAsDataURL(file); } };
-        window.updateProfile = async () => { const name = document.getElementById('set-name').value, badge = document.getElementById('set-badge').value, u = { name, badge }; if (base64Avatar) u.avatar = base64Avatar; await updateDoc(doc(db, "users", currentUser.email), u); closeModals(); showToast("تم التحديث!", "success"); };
+        window.updateProfile = async () => { const name = document.getElementById('set-name').value, bio = document.getElementById('set-bio').value, badge = document.getElementById('set-badge').value, u = { name, bio, badge }; if (base64Avatar) u.avatar = base64Avatar; await updateDoc(doc(db, "users", currentUser.email), u); closeModals(); showToast("تم التحديث!", "success"); };
         window.toggleAdminPanel = () => document.getElementById('admin-panel').classList.toggle('hidden');
-        window.closeModals = () => document.querySelectorAll('[id^="modal-"], #admin-panel').forEach(m => m.classList.add('hidden'));
-        window.adminAction = async (type) => { const email = document.getElementById('admin-user').value.trim(); if (!email) return showToast("أدخل إيميل المستخدم", "error"); const ref = doc(db, "users", email), snap = await getDoc(ref); if(!snap.exists()) return showToast("المستخدم غير موجود", "error"); if(type === 'coins') { const v = parseInt(document.getElementById('admin-amount').value); if (isNaN(v) || v <= 0) return showToast("كمية غير صحيحة", "error"); await updateDoc(ref, { xCoins: (snap.data().xCoins || 0) + v }); showToast(`تم شحن ${v} X`, "success"); } else if (type === 'premium') { const c = snap.data().isPremium || false; await updateDoc(ref, { isPremium: !c }); showToast(`تم ${c ? 'إزالة' : 'منح'} البريميوم`, "success"); } else if (type === 'resetAI') { await updateDoc(ref, { aiMsgCount: 0, aiMsgResetDate: "" }); showToast("تم التصفير", "success"); } };
+        window.closeModals = () => document.querySelectorAll('[id^="modal-"], #admin-panel, #invite-screen').forEach(m => m.classList.add('hidden'));
+        window.adminAction = async (type) => { const email = document.getElementById('admin-user').value.trim(); if (!email) return showToast("أدخل إيميل", "error"); const ref = doc(db, "users", email), snap = await getDoc(ref); if(!snap.exists()) return showToast("غير موجود", "error"); if(type === 'coins') { const v = parseInt(document.getElementById('admin-amount').value); if (isNaN(v) || v <= 0) return showToast("كمية غير صحيحة", "error"); await updateDoc(ref, { xCoins: (snap.data().xCoins || 0) + v }); showToast(`تم شحن ${v} X`, "success"); } else if (type === 'premium') { const c = snap.data().isPremium || false; await updateDoc(ref, { isPremium: !c }); showToast(`تم ${c ? 'إزالة' : 'منح'} البريميوم`, "success"); } else if (type === 'resetAI') { await updateDoc(ref, { aiMsgCount: 0, aiMsgResetDate: "" }); showToast("تم التصفير", "success"); } };
 
         renderSidebarActionArea();
     </script>
